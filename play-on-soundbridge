@@ -1,0 +1,65 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+
+use Data::Dumper;
+use List::Util qw(first);
+use XML::Simple qw(XMLin);
+use Net::UPnP::ControlPoint;
+use Net::UPnP::AV::MediaRenderer;
+
+sub find_device($$@);
+ 
+my $cp = Net::UPnP::ControlPoint->new;
+my @devices = $cp->search;
+
+my $src = find_device MediaServer   => 'Gst Launch',  @devices;
+my $dst = find_device MediaRenderer => 'Soundbridge', @devices;
+
+die "Unable to find the source 'Gst Launch'\n"       unless $src;
+die "Unable to find the destination 'Soundbridge'\n" unless $dst;
+
+#
+# Find the stream URL first from Rygel
+#
+my $directory = first { $_->getservicetype =~ /ContentDirectory/ }
+                      $src->getservicelist;
+
+# we subvert the api here so we can just fucking do what we want
+my $action = $directory->postcontrol(
+    Browse => {
+        ObjectID        => 0,
+        BrowseFlag      => 'BrowseDirectChildren',
+        Filter          => '*',
+        StartingIndex   => 0,
+        RequestedCount  => 0,
+        SortCriteria    => '',
+    },
+);
+
+my $result = $action->getargumentlist->{'Result'}
+    or die "Bad action result: ", Dumper($action->getargumentlist), "\n";
+
+my $stream = first  { /LPCM$/i }
+             map    { $_->{content} }
+                    @{XMLin($result)->{item}{pulse}{res}};
+
+# http://10.0.0.4:44444/RygelHTTPServer/GstLaunch/item/(base64)/transcoded/LPCM
+
+# 
+# And now play it via the Soundbridge
+#
+my $renderer = Net::UPnP::AV::MediaRenderer->new;
+$renderer->setdevice($dst);
+$renderer->stop;
+$renderer->setAVTransportURI( CurrentURI => $stream );
+$renderer->play;
+
+sub find_device($$@) {
+    my $type = shift;
+    my $name = shift;
+    first {
+            $_->getdevicetype   =~ /$type/
+        and $_->getfriendlyname =~ /$name/i
+    } @_;
+}
