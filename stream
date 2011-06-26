@@ -1,0 +1,35 @@
+#!/bin/bash
+dst=$1
+src=${2:-Banshee}
+inputidx=$(find-sink-input "$src")
+
+if [[ -z $inputidx ]]; then
+    echo Unable to find sink input index for $src
+    exit 1
+fi
+
+case "$dst" in
+    home|soundbridge|sb)
+        sink='streaming'
+        pacmd set-sink-mute $sink 0 >/dev/null
+        pacmd set-source-mute $sink.monitor 0 >/dev/null
+        # XXX TODO: trigger rygel too!  how?  with perl!
+        ;;
+    bps|work|office)
+        sink='raop.Conference-Room.local'
+        gconftool -s --type bool /system/pulseaudio/modules/raop-discover/enabled true
+        sleep 5
+        pacmd set-sink-mute $sink 0 >/dev/null
+        ;;
+    alsa|local|hw|off)
+        sink=0
+        gconftool -s --type bool /system/pulseaudio/modules/raop-discover/enabled false
+        ;;
+    *)
+        echo "Uh, what?"
+        exit 1
+        ;;
+esac
+
+echo "Streaming $src ($inputidx) to $dst ($sink)"
+pactl move-sink-input $inputidx $sink
