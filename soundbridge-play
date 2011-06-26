@@ -58,10 +58,10 @@ my $stream = first { /LPCM/ }
                map { $_->{'content'} }
                    @{$items->{$name}{'res'}};
 
-die "Unable to find stream $name being served by Rygel\n"
+die "Unable to find stream '$name' being served by Rygel\n"
     unless $stream;
 
-print "Playing stream $name\n";
+print "Playing '$name' over the soundbridge\n";
 
 # Remove extraneous metadata
 delete $items->{$_} for grep { $_ ne $name } keys %$items;
