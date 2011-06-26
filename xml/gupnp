@@ -1,0 +1,304 @@
+POST /UD/?2 HTTP/1.1
+Host: 10.0.0.5
+SOAPAction: "urn:schemas-upnp-org:service:AVTransport:1#GetTransportInfo"
+Accept-Language: en-us;q=1, en;q=0.5
+Content-Type: text/xml; charset=utf-8
+User-Agent: gupnp-av-cp GUPnP/0.14.0 DLNADOC/1.50
+Content-Length: 295
+
+<?xml version="1.0"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body><u:GetTransportInfo xmlns:u="urn:schemas-upnp-org:service:AVTransport:1"><InstanceID>0</InstanceID></u:GetTransportInfo></s:Body></s:Envelope>HTTP/1.1 200 OK
+Content-Type: text/xml; charset="utf-8"
+Date: Mon, 21 Jun 2004 05:11:30 GMT
+Content-Length: 421
+Server: Allegro-Software-RomPager/4.32
+
+<s:Envelope
+ xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"
+s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+<s:Body><u:GetTransportInfoResponse xmlns:u="urn:schemas-upnp-org:service:AVTransport:1">
+ <CurrentTransportState>STOPPED</CurrentTransportState>
+ <CurrentTransportStatus>OK</CurrentTransportStatus>
+ <CurrentSpeed>1</CurrentSpeed>
+</u:GetTransportInfoResponse>
+</s:Body>
+</s:Envelope>
+POST /UD/?2 HTTP/1.1
+Host: 10.0.0.5
+SOAPAction: "urn:schemas-upnp-org:service:AVTransport:1#GetMediaInfo"
+Accept-Language: en-us;q=1, en;q=0.5
+Content-Type: text/xml; charset=utf-8
+User-Agent: gupnp-av-cp GUPnP/0.14.0 DLNADOC/1.50
+Content-Length: 287
+
+<?xml version="1.0"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body><u:GetMediaInfo xmlns:u="urn:schemas-upnp-org:service:AVTransport:1"><InstanceID>0</InstanceID></u:GetMediaInfo></s:Body></s:Envelope>HTTP/1.1 200 OK
+Content-Type: text/xml; charset="utf-8"
+Date: Mon, 21 Jun 2004 05:11:30 GMT
+Content-Length: 918
+Server: Allegro-Software-RomPager/4.32
+
+<s:Envelope
+ xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"
+s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+<s:Body><u:GetMediaInfoResponse xmlns:u="urn:schemas-upnp-org:service:AVTransport:1">
+ <NrTracks>1</NrTracks>
+ <MediaDuration>00:00:00</MediaDuration>
+ <CurrentURI>unknown track uri</CurrentURI>
+ <CurrentURIMetaData>&lt;DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/"
+xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/"
+xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"&gt;
+&lt;item&gt;&lt;upnp:class&gt;object.item.audioItem.musicTrack&lt;/upnp:class&gt;&lt;/item&gt;&lt;/DIDL-Lite&gt;</CurrentURIMetaData>
+ <NextURI>unknown next transport uri</NextURI>
+ <NextURIMetaData></NextURIMetaData>
+ <PlayMedium>NETWORK</PlayMedium>
+ <RecordMedium>NOT_IMPLEMENTED</RecordMedium>
+ <WriteStatus>NOT_IMPLEMENTED</WriteStatus>
+</u:GetMediaInfoResponse>
+</s:Body>
+</s:Envelope>
+POST /UD/?2 HTTP/1.1
+Host: 10.0.0.5
+SOAPAction: "urn:schemas-upnp-org:service:AVTransport:1#SetAVTransportURI"
+Accept-Language: en-us;q=1, en;q=0.5
+Content-Type: text/xml; charset=utf-8
+User-Agent: gupnp-av-cp GUPnP/0.14.0 DLNADOC/1.50
+Content-Length: 1700
+
+<?xml version="1.0"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body><u:SetAVTransportURI xmlns:u="urn:schemas-upnp-org:service:AVTransport:1"><InstanceID>0</InstanceID><CurrentURI>http://10.0.0.4:44444/RygelHTTPServer/GstLaunch/item/cHVsc2U%3D/transcoded/LPCM</CurrentURI><CurrentURIMetaData>&lt;DIDL-Lite xmlns:dc=&quot;http://purl.org/dc/elements/1.1/&quot; xmlns:upnp=&quot;urn:schemas-upnp-org:metadata-1-0/upnp/&quot; xmlns=&quot;urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/&quot;&gt;&lt;item id=&quot;pulse&quot; parentID=&quot;0&quot; restricted=&quot;0&quot;&gt;&lt;dc:title&gt;Audio from blip&lt;/dc:title&gt;&lt;upnp:class&gt;object.item.audioItem&lt;/upnp:class&gt;&lt;res importUri=&quot;http://10.0.0.4:44444/RygelHTTPServer/GstLaunch/item/cHVsc2U%3D&quot; protocolInfo=&quot;http-get:*:audio/x-wav:*&quot;&gt;http://10.0.0.4:44444/RygelHTTPServer/GstLaunch/item/cHVsc2U%3D&lt;/res&gt;&lt;res protocolInfo=&quot;http-get:*:audio/L16;rate=44100;channels=2:DLNA.ORG_PN=LPCM;DLNA.ORG_CI=1;DLNA.ORG_FLAGS=01100000000000000000000000000000&quot; sampleFrequency=&quot;44100&quot; nrAudioChannels=&quot;2&quot; bitsPerSample=&quot;16&quot; bitrate=&quot;176400&quot;&gt;http://10.0.0.4:44444/RygelHTTPServer/GstLaunch/item/cHVsc2U%3D/transcoded/LPCM&lt;/res&gt;&lt;res protocolInfo=&quot;http-get:*:audio/mpeg:DLNA.ORG_PN=MP3;DLNA.ORG_CI=1;DLNA.ORG_FLAGS=01100000000000000000000000000000&quot; bitrate=&quot;32000&quot;&gt;http://10.0.0.4:44444/RygelHTTPServer/GstLaunch/item/cHVsc2U%3D/transcoded/MP3&lt;/res&gt;&lt;/item&gt;&lt;/DIDL-Lite&gt;</CurrentURIMetaData></u:SetAVTransportURI></s:Body></s:Envelope>HTTP/1.1 200 OK
+Content-Type: text/xml; charset="utf-8"
+Date: Mon, 21 Jun 2004 05:11:36 GMT
+Content-Length: 279
+Server: Allegro-Software-RomPager/4.32
+
+<s:Envelope
+ xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"
+s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+<s:Body><u:SetAVTransportURIResponse xmlns:u="urn:schemas-upnp-org:service:AVTransport:1">
+</u:SetAVTransportURIResponse>
+</s:Body>
+</s:Envelope>
+POST /UD/?2 HTTP/1.1
+Host: 10.0.0.5
+SOAPAction: "urn:schemas-upnp-org:service:AVTransport:1#Play"
+Accept-Language: en-us;q=1, en;q=0.5
+Content-Type: text/xml; charset=utf-8
+User-Agent: gupnp-av-cp GUPnP/0.14.0 DLNADOC/1.50
+Content-Length: 287
+
+<?xml version="1.0"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body><u:Play xmlns:u="urn:schemas-upnp-org:service:AVTransport:1"><InstanceID>0</InstanceID><Speed>1</Speed></u:Play></s:Body></s:Envelope>HTTP/1.1 200 OK
+Content-Type: text/xml; charset="utf-8"
+Date: Mon, 21 Jun 2004 05:11:36 GMT
+Content-Length: 253
+Server: Allegro-Software-RomPager/4.32
+
+<s:Envelope
+ xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"
+s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+<s:Body><u:PlayResponse xmlns:u="urn:schemas-upnp-org:service:AVTransport:1">
+</u:PlayResponse>
+</s:Body>
+</s:Envelope>
+POST /UD/?2 HTTP/1.1
+Host: 10.0.0.5
+SOAPAction: "urn:schemas-upnp-org:service:AVTransport:1#GetPositionInfo"
+Accept-Language: en-us;q=1, en;q=0.5
+Content-Type: text/xml; charset=utf-8
+User-Agent: gupnp-av-cp GUPnP/0.14.0 DLNADOC/1.50
+Content-Length: 293
+
+<?xml version="1.0"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body><u:GetPositionInfo xmlns:u="urn:schemas-upnp-org:service:AVTransport:1"><InstanceID>0</InstanceID></u:GetPositionInfo></s:Body></s:Envelope>HTTP/1.1 200 OK
+Content-Type: text/xml; charset="utf-8"
+Date: Mon, 21 Jun 2004 05:11:38 GMT
+Content-Length: 1192
+Server: Allegro-Software-RomPager/4.32
+
+<s:Envelope
+ xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"
+s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+<s:Body><u:GetPositionInfoResponse xmlns:u="urn:schemas-upnp-org:service:AVTransport:1">
+ <Track>1</Track>
+ <TrackDuration>0:00:00</TrackDuration>
+ <TrackMetaData>&lt;DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/"
+xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/"
+xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"&gt;
+&lt;item id=&quot;pulse&quot;&gt;&lt;upnp:class&gt;object.item.audioItem.musicTrack&lt;/upnp:class&gt;&lt;dc:title&gt;Audio from blip&lt;/dc:title&gt;&lt;res bitrate=&quot;176375&quot; bitsPerSample=&quot;16&quot; nrAudioChannels=&quot;2&quot; sampleFrequency=&quot;44100&quot; duration=&quot;0:00:00&quot; protocolInfo=&quot;http-get:*:audio/L16:*&quot;&gt;http://10.0.0.4:44444/RygelHTTPServer/GstLaunch/item/cHVsc2U%3D/transcoded/LPCM&lt;/res&gt;&lt;/item&gt;&lt;/DIDL-Lite&gt;</TrackMetaData>
+ <TrackURI>unknown track uri</TrackURI>
+ <RelTime>0:00:00</RelTime>
+ <AbsTime>NOT_IMPLEMENTED</AbsTime>
+ <RelCount>2147483647</RelCount>
+ <AbsCount>2147483647</AbsCount>
+</u:GetPositionInfoResponse>
+</s:Body>
+</s:Envelope>
+POST /UD/?2 HTTP/1.1
+Host: 10.0.0.5
+SOAPAction: "urn:schemas-upnp-org:service:AVTransport:1#GetPositionInfo"
+Accept-Language: en-us;q=1, en;q=0.5
+Content-Type: text/xml; charset=utf-8
+User-Agent: gupnp-av-cp GUPnP/0.14.0 DLNADOC/1.50
+Content-Length: 293
+
+<?xml version="1.0"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body><u:GetPositionInfo xmlns:u="urn:schemas-upnp-org:service:AVTransport:1"><InstanceID>0</InstanceID></u:GetPositionInfo></s:Body></s:Envelope>HTTP/1.1 200 OK
+Content-Type: text/xml; charset="utf-8"
+Date: Mon, 21 Jun 2004 05:11:39 GMT
+Content-Length: 1192
+Server: Allegro-Software-RomPager/4.32
+
+<s:Envelope
+ xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"
+s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+<s:Body><u:GetPositionInfoResponse xmlns:u="urn:schemas-upnp-org:service:AVTransport:1">
+ <Track>1</Track>
+ <TrackDuration>0:00:00</TrackDuration>
+ <TrackMetaData>&lt;DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/"
+xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/"
+xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"&gt;
+&lt;item id=&quot;pulse&quot;&gt;&lt;upnp:class&gt;object.item.audioItem.musicTrack&lt;/upnp:class&gt;&lt;dc:title&gt;Audio from blip&lt;/dc:title&gt;&lt;res bitrate=&quot;176375&quot; bitsPerSample=&quot;16&quot; nrAudioChannels=&quot;2&quot; sampleFrequency=&quot;44100&quot; duration=&quot;0:00:00&quot; protocolInfo=&quot;http-get:*:audio/L16:*&quot;&gt;http://10.0.0.4:44444/RygelHTTPServer/GstLaunch/item/cHVsc2U%3D/transcoded/LPCM&lt;/res&gt;&lt;/item&gt;&lt;/DIDL-Lite&gt;</TrackMetaData>
+ <TrackURI>unknown track uri</TrackURI>
+ <RelTime>0:00:01</RelTime>
+ <AbsTime>NOT_IMPLEMENTED</AbsTime>
+ <RelCount>2147483647</RelCount>
+ <AbsCount>2147483647</AbsCount>
+</u:GetPositionInfoResponse>
+</s:Body>
+</s:Envelope>
+POST /UD/?2 HTTP/1.1
+Host: 10.0.0.5
+SOAPAction: "urn:schemas-upnp-org:service:AVTransport:1#GetPositionInfo"
+Accept-Language: en-us;q=1, en;q=0.5
+Content-Type: text/xml; charset=utf-8
+User-Agent: gupnp-av-cp GUPnP/0.14.0 DLNADOC/1.50
+Content-Length: 293
+
+<?xml version="1.0"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body><u:GetPositionInfo xmlns:u="urn:schemas-upnp-org:service:AVTransport:1"><InstanceID>0</InstanceID></u:GetPositionInfo></s:Body></s:Envelope>HTTP/1.1 200 OK
+Content-Type: text/xml; charset="utf-8"
+Date: Mon, 21 Jun 2004 05:11:40 GMT
+Content-Length: 1192
+Server: Allegro-Software-RomPager/4.32
+
+<s:Envelope
+ xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"
+s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+<s:Body><u:GetPositionInfoResponse xmlns:u="urn:schemas-upnp-org:service:AVTransport:1">
+ <Track>1</Track>
+ <TrackDuration>0:00:00</TrackDuration>
+ <TrackMetaData>&lt;DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/"
+xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/"
+xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"&gt;
+&lt;item id=&quot;pulse&quot;&gt;&lt;upnp:class&gt;object.item.audioItem.musicTrack&lt;/upnp:class&gt;&lt;dc:title&gt;Audio from blip&lt;/dc:title&gt;&lt;res bitrate=&quot;176375&quot; bitsPerSample=&quot;16&quot; nrAudioChannels=&quot;2&quot; sampleFrequency=&quot;44100&quot; duration=&quot;0:00:00&quot; protocolInfo=&quot;http-get:*:audio/L16:*&quot;&gt;http://10.0.0.4:44444/RygelHTTPServer/GstLaunch/item/cHVsc2U%3D/transcoded/LPCM&lt;/res&gt;&lt;/item&gt;&lt;/DIDL-Lite&gt;</TrackMetaData>
+ <TrackURI>unknown track uri</TrackURI>
+ <RelTime>0:00:02</RelTime>
+ <AbsTime>NOT_IMPLEMENTED</AbsTime>
+ <RelCount>2147483647</RelCount>
+ <AbsCount>2147483647</AbsCount>
+</u:GetPositionInfoResponse>
+</s:Body>
+</s:Envelope>
+POST /UD/?2 HTTP/1.1
+Host: 10.0.0.5
+SOAPAction: "urn:schemas-upnp-org:service:AVTransport:1#GetPositionInfo"
+Accept-Language: en-us;q=1, en;q=0.5
+Content-Type: text/xml; charset=utf-8
+User-Agent: gupnp-av-cp GUPnP/0.14.0 DLNADOC/1.50
+Content-Length: 293
+
+<?xml version="1.0"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body><u:GetPositionInfo xmlns:u="urn:schemas-upnp-org:service:AVTransport:1"><InstanceID>0</InstanceID></u:GetPositionInfo></s:Body></s:Envelope>HTTP/1.1 200 OK
+Content-Type: text/xml; charset="utf-8"
+Date: Mon, 21 Jun 2004 05:11:41 GMT
+Content-Length: 1192
+Server: Allegro-Software-RomPager/4.32
+
+<s:Envelope
+ xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"
+s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+<s:Body><u:GetPositionInfoResponse xmlns:u="urn:schemas-upnp-org:service:AVTransport:1">
+ <Track>1</Track>
+ <TrackDuration>0:00:00</TrackDuration>
+ <TrackMetaData>&lt;DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/"
+xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/"
+xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"&gt;
+&lt;item id=&quot;pulse&quot;&gt;&lt;upnp:class&gt;object.item.audioItem.musicTrack&lt;/upnp:class&gt;&lt;dc:title&gt;Audio from blip&lt;/dc:title&gt;&lt;res bitrate=&quot;176375&quot; bitsPerSample=&quot;16&quot; nrAudioChannels=&quot;2&quot; sampleFrequency=&quot;44100&quot; duration=&quot;0:00:00&quot; protocolInfo=&quot;http-get:*:audio/L16:*&quot;&gt;http://10.0.0.4:44444/RygelHTTPServer/GstLaunch/item/cHVsc2U%3D/transcoded/LPCM&lt;/res&gt;&lt;/item&gt;&lt;/DIDL-Lite&gt;</TrackMetaData>
+ <TrackURI>unknown track uri</TrackURI>
+ <RelTime>0:00:03</RelTime>
+ <AbsTime>NOT_IMPLEMENTED</AbsTime>
+ <RelCount>2147483647</RelCount>
+ <AbsCount>2147483647</AbsCount>
+</u:GetPositionInfoResponse>
+</s:Body>
+</s:Envelope>
+POST /UD/?2 HTTP/1.1
+Host: 10.0.0.5
+SOAPAction: "urn:schemas-upnp-org:service:AVTransport:1#GetPositionInfo"
+Accept-Language: en-us;q=1, en;q=0.5
+Content-Type: text/xml; charset=utf-8
+User-Agent: gupnp-av-cp GUPnP/0.14.0 DLNADOC/1.50
+Content-Length: 293
+
+<?xml version="1.0"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body><u:GetPositionInfo xmlns:u="urn:schemas-upnp-org:service:AVTransport:1"><InstanceID>0</InstanceID></u:GetPositionInfo></s:Body></s:Envelope>HTTP/1.1 200 OK
+Content-Type: text/xml; charset="utf-8"
+Date: Mon, 21 Jun 2004 05:11:42 GMT
+Content-Length: 1192
+Server: Allegro-Software-RomPager/4.32
+
+<s:Envelope
+ xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"
+s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+<s:Body><u:GetPositionInfoResponse xmlns:u="urn:schemas-upnp-org:service:AVTransport:1">
+ <Track>1</Track>
+ <TrackDuration>0:00:00</TrackDuration>
+ <TrackMetaData>&lt;DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/"
+xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/"
+xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"&gt;
+&lt;item id=&quot;pulse&quot;&gt;&lt;upnp:class&gt;object.item.audioItem.musicTrack&lt;/upnp:class&gt;&lt;dc:title&gt;Audio from blip&lt;/dc:title&gt;&lt;res bitrate=&quot;176375&quot; bitsPerSample=&quot;16&quot; nrAudioChannels=&quot;2&quot; sampleFrequency=&quot;44100&quot; duration=&quot;0:00:00&quot; protocolInfo=&quot;http-get:*:audio/L16:*&quot;&gt;http://10.0.0.4:44444/RygelHTTPServer/GstLaunch/item/cHVsc2U%3D/transcoded/LPCM&lt;/res&gt;&lt;/item&gt;&lt;/DIDL-Lite&gt;</TrackMetaData>
+ <TrackURI>unknown track uri</TrackURI>
+ <RelTime>0:00:04</RelTime>
+ <AbsTime>NOT_IMPLEMENTED</AbsTime>
+ <RelCount>2147483647</RelCount>
+ <AbsCount>2147483647</AbsCount>
+</u:GetPositionInfoResponse>
+</s:Body>
+</s:Envelope>
+POST /UD/?2 HTTP/1.1
+Host: 10.0.0.5
+SOAPAction: "urn:schemas-upnp-org:service:AVTransport:1#GetPositionInfo"
+Accept-Language: en-us;q=1, en;q=0.5
+Content-Type: text/xml; charset=utf-8
+User-Agent: gupnp-av-cp GUPnP/0.14.0 DLNADOC/1.50
+Content-Length: 293
+
+<?xml version="1.0"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body><u:GetPositionInfo xmlns:u="urn:schemas-upnp-org:service:AVTransport:1"><InstanceID>0</InstanceID></u:GetPositionInfo></s:Body></s:Envelope>HTTP/1.1 200 OK
+Content-Type: text/xml; charset="utf-8"
+Date: Mon, 21 Jun 2004 05:11:43 GMT
+Content-Length: 1192
+Server: Allegro-Software-RomPager/4.32
+
+<s:Envelope
+ xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"
+s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+<s:Body><u:GetPositionInfoResponse xmlns:u="urn:schemas-upnp-org:service:AVTransport:1">
+ <Track>1</Track>
+ <TrackDuration>0:00:00</TrackDuration>
+ <TrackMetaData>&lt;DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/"
+xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/"
+xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"&gt;
+&lt;item id=&quot;pulse&quot;&gt;&lt;upnp:class&gt;object.item.audioItem.musicTrack&lt;/upnp:class&gt;&lt;dc:title&gt;Audio from blip&lt;/dc:title&gt;&lt;res bitrate=&quot;176375&quot; bitsPerSample=&quot;16&quot; nrAudioChannels=&quot;2&quot; sampleFrequency=&quot;44100&quot; duration=&quot;0:00:00&quot; protocolInfo=&quot;http-get:*:audio/L16:*&quot;&gt;http://10.0.0.4:44444/RygelHTTPServer/GstLaunch/item/cHVsc2U%3D/transcoded/LPCM&lt;/res&gt;&lt;/item&gt;&lt;/DIDL-Lite&gt;</TrackMetaData>
+ <TrackURI>unknown track uri</TrackURI>
+ <RelTime>0:00:05</RelTime>
+ <AbsTime>NOT_IMPLEMENTED</AbsTime>
+ <RelCount>2147483647</RelCount>
+ <AbsCount>2147483647</AbsCount>
+</u:GetPositionInfoResponse>
+</s:Body>
+</s:Envelope>
+SUBSCRIBE /?0 HTTP/1.1
+Host: 10.0.0.5
+SID: uuid:0a000004-4eb32200
+Timeout: Second-1800
+User-Agent: gupnp-av-cp GUPnP/0.14.0 DLNADOC/1.50
+
+HTTP/1.1 200 OK
+SID: uuid:0a000004-4eb32200
+Timeout: Second-300
+Content-Length: 0
+Server: Allegro-Software-RomPager/4.32
+Connection: close
+
