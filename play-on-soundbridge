@@ -4,14 +4,28 @@ use warnings;
 
 use Data::Dumper;
 use List::Util qw(first);
-use XML::Simple qw(XMLin);
+use XML::Simple;
+use HTML::Entities;
 use Net::UPnP::ControlPoint;
 use Net::UPnP::AV::MediaRenderer;
 
-sub find_device($$@);
- 
+sub find_device($$@) {
+    my $type = shift;
+    my $name = shift;
+    first {
+            $_->getdevicetype   =~ /$type/
+        and $_->getfriendlyname =~ /$name/i
+    } @_;
+}
+
+my $xml = XML::Simple->new(
+    ForceArray  => 1,
+    KeyAttr     => 'id',
+    KeepRoot    => 1,
+);
+
 my $cp = Net::UPnP::ControlPoint->new;
-my @devices = $cp->search;
+my @devices = $cp->search(mx => 1);
 
 my $src = find_device MediaServer   => 'Gst Launch',  @devices;
 my $dst = find_device MediaRenderer => 'Soundbridge', @devices;
@@ -19,9 +33,6 @@ my $dst = find_device MediaRenderer => 'Soundbridge', @devices;
 die "Unable to find the source 'Gst Launch'\n"       unless $src;
 die "Unable to find the destination 'Soundbridge'\n" unless $dst;
 
-#
-# Find the stream URL first from Rygel
-#
 my $directory = first { $_->getservicetype =~ /ContentDirectory/ }
                       $src->getservicelist;
 
@@ -37,29 +48,31 @@ my $action = $directory->postcontrol(
     },
 );
 
-my $result = $action->getargumentlist->{'Result'}
+# Get the stream we want
+my $result = $xml->XMLin($action->getargumentlist->{'Result'})
     or die "Bad action result: ", Dumper($action->getargumentlist), "\n";
 
-my $stream = first  { /LPCM$/i }
-             map    { $_->{content} }
-                    @{XMLin($result)->{item}{pulse}{res}};
+my $items  = $result->{'DIDL-Lite'}[0]{'item'};
+my $name   = shift || 'streaming';
+my $stream = first { /LPCM/ }
+               map { $_->{'content'} }
+                   @{$items->{$name}{'res'}};
 
-# http://10.0.0.4:44444/RygelHTTPServer/GstLaunch/item/(base64)/transcoded/LPCM
+die "Unable to find stream $name being served by Rygel\n"
+    unless $stream;
 
-# 
-# And now play it via the Soundbridge
-#
+print "Playing stream $name\n";
+
+# Remove extraneous metadata
+delete $items->{$_} for grep { $_ ne $name } keys %$items;
+
+# Let's go!
 my $renderer = Net::UPnP::AV::MediaRenderer->new;
 $renderer->setdevice($dst);
-$renderer->stop;
-$renderer->setAVTransportURI( CurrentURI => $stream );
+$renderer->setAVTransportURI(
+    CurrentURI => $stream,
+    CurrentURIMetaData => encode_entities($xml->XMLout($result)),
+    InstanceID => 0,
+);
 $renderer->play;
 
-sub find_device($$@) {
-    my $type = shift;
-    my $name = shift;
-    first {
-            $_->getdevicetype   =~ /$type/
-        and $_->getfriendlyname =~ /$name/i
-    } @_;
-}
