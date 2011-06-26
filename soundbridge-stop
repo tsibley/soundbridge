@@ -1,0 +1,21 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+
+use List::Util qw(first);
+use Net::UPnP::ControlPoint;
+use Net::UPnP::AV::MediaRenderer;
+
+my $soundbridge = first {
+        $_->getdevicetype   =~ /MediaRenderer/
+    and $_->getfriendlyname =~ /soundbridge/i
+} Net::UPnP::ControlPoint->new->search(mx => 1);
+
+die "Unable to find the Soundbridge\n"
+    unless $soundbridge;
+
+print "Stopping Soundbridge\n";
+
+my $renderer = Net::UPnP::AV::MediaRenderer->new;
+$renderer->setdevice($soundbridge);
+$renderer->stop;
