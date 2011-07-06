@@ -60,5 +60,23 @@ $ soundbridge-upnp-stop
 of redirecting pulse audio streams around to the various devices I care about.
 Namely, the work airtunes speakers, my soundbridge, and my local laptop
 speakers.  It's a good example of how to move all that audio around and start
-and stop network streaming.
+and stop network streaming.  Examples of how I use it:
 
+$ stream home
+Playing 'streaming' over the soundbridge
+Streaming Banshee (18) to home (streaming)
+
+$ stream off
+Streaming Banshee (18) to off (0)
+
+$ stream work
+Streaming Banshee (18) to work (raop.Conference-Room.local)
+
+$ stream work chrome
+Streaming chrome (21) to work (raop.Conference-Room.local)
+
+$ stream off chrome
+Streaming chrome (21) to off (0)
+
+$ stream preset npr
+Playing NPR... OK
