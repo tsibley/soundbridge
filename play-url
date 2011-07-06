@@ -1,0 +1,48 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+
+use IO::Socket::INET;
+
+my $sock = IO::Socket::INET->new('soundbridge.local:5555')
+    or die "Unable to bind to soundbridge: $!";
+
+die "Huh?" unless $sock->getline =~ /roku: ready/;
+
+# XXX TODO: man, this really should get pulled into a library, including the
+# above
+sub cmd ($;$) {
+    my $cmd  = shift;
+    my $code = shift;
+    my $pre  = (split / /, $cmd, 2)[0];
+
+    $sock->print("$cmd\n");
+    while ($_ = $sock->getline) {
+        s/^\Q$pre\E:\s*//;
+        s/[\r\n]//g;
+        $code->($_) if $code;
+        warn "$cmd: $_\n" if /Error|UnknownCommand/;
+        last if /^(?:ListResultEnd|OK|TransactionComplete|.*Error|UnknownCommand)/;
+    }
+}
+
+my $url = shift @ARGV;
+#http://podcast.wfmu.org/TI/ti110627p.mp3
+
+die "usage: $0 url\n" unless $url;
+
+# XXX TODO: This format "detection" is crap. Use HEAD to get Content-Type
+# and normalize to what RCP accepts.
+my ($ext) = ($url =~ /\.(\w+)$/);
+
+cmd "ServerDisconnect";
+cmd "SetServerFilter radio";
+cmd "ListServers";
+cmd "ServerConnect 0";
+cmd "ClearWorkingSong";
+cmd "SetWorkingSongInfo title $url";
+cmd "SetWorkingSongInfo url $url";
+cmd "SetWorkingSongInfo format \U$ext";
+cmd "QueueAndPlayOne working";
+
+$sock->close;
