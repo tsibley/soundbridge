@@ -3,17 +3,17 @@
   <s:Body>
     <u:SetAVTransportURI xmlns:u="urn:schemas-upnp-org:service:AVTransport:1">
       <InstanceID>0</InstanceID>
-      <CurrentURI>http://10.0.0.4:44444/RygelHTTPServer/GstLaunch/item/cHVsc2U%3D/transcoded/LPCM</CurrentURI>
+      <CurrentURI>http://10.0.0.4:44444/RygelHTTPServer/GstLaunch/item/c3RyZWFtaW5n/transcoded/LPCM</CurrentURI>
       <CurrentURIMetaData>
-        <DIDL-Lite xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">
-          <item id="pulse" parentID="0" restricted="0">
-            <dc:title>Audio from blip</dc:title>
-            <upnp:class>object.item.audioItem</upnp:class>
-            <res importUri="http://10.0.0.4:44444/RygelHTTPServer/GstLaunch/item/cHVsc2U%3D" protocolInfo="http-get:*:audio/x-wav:*">http://10.0.0.4:44444/RygelHTTPServer/GstLaunch/item/cHVsc2U%3D</res>
-            <res bitrate="176400" bitsPerSample="16" nrAudioChannels="2" protocolInfo="http-get:*:audio/L16;rate=44100;channels=2:DLNA.ORG_PN=LPCM;DLNA.ORG_CI=1;DLNA.ORG_FLAGS=01100000000000000000000000000000" sampleFrequency="44100">http://10.0.0.4:44444/RygelHTTPServer/GstLaunch/item/cHVsc2U%3D/transcoded/LPCM</res>
-            <res bitrate="32000" protocolInfo="http-get:*:audio/mpeg:DLNA.ORG_PN=MP3;DLNA.ORG_CI=1;DLNA.ORG_FLAGS=01100000000000000000000000000000">http://10.0.0.4:44444/RygelHTTPServer/GstLaunch/item/cHVsc2U%3D/transcoded/MP3</res>
-          </item>
-        </DIDL-Lite>
+        &lt;DIDL-Lite xmlns=&quot;urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/&quot; xmlns:dc=&quot;http://purl.org/dc/elements/1.1/&quot; xmlns:upnp=&quot;urn:schemas-upnp-org:metadata-1-0/upnp/&quot;&gt;
+          &lt;item id=&quot;streaming&quot; parentID=&quot;0&quot; restricted=&quot;0&quot;&gt;
+            &lt;dc:title&gt;Audio from blip&lt;/dc:title&gt;
+            &lt;upnp:class&gt;object.item.audioItem&lt;/upnp:class&gt;
+            &lt;res importUri=&quot;http://10.0.0.4:44444/RygelHTTPServer/GstLaunch/item/c3RyZWFtaW5n&quot; protocolInfo=&quot;http-get:*:audio/x-wav:*&quot;&gt;http://10.0.0.4:44444/RygelHTTPServer/GstLaunch/item/c3RyZWFtaW5n&lt;/res&gt;
+            &lt;res bitrate=&quot;176400&quot; bitsPerSample=&quot;16&quot; nrAudioChannels=&quot;2&quot; protocolInfo=&quot;http-get:*:audio/L16;rate=44100;channels=2:DLNA.ORG_PN=LPCM;DLNA.ORG_CI=1;DLNA.ORG_FLAGS=01100000000000000000000000000000&quot; sampleFrequency=&quot;44100&quot;&gt;http://10.0.0.4:44444/RygelHTTPServer/GstLaunch/item/c3RyZWFtaW5n/transcoded/LPCM&lt;/res&gt;
+            &lt;res bitrate=&quot;32000&quot; protocolInfo=&quot;http-get:*:audio/mpeg:DLNA.ORG_PN=MP3;DLNA.ORG_CI=1;DLNA.ORG_FLAGS=01100000000000000000000000000000&quot;&gt;http://10.0.0.4:44444/RygelHTTPServer/GstLaunch/item/c3RyZWFtaW5n/transcoded/MP3&lt;/res&gt;
+          &lt;/item&gt;
+        &lt;/DIDL-Lite&gt;
       </CurrentURIMetaData>
     </u:SetAVTransportURI>
   </s:Body>
