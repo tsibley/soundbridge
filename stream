@@ -13,7 +13,7 @@ case "$dst" in
         sink='streaming'
         pacmd set-sink-mute $sink 0 >/dev/null
         pacmd set-source-mute $sink.monitor 0 >/dev/null
-        soundbridge-play $sink
+        soundbridge-upnp-play $sink
         ;;
     bps|work|office)
         sink='raop.Conference-Room.local'
