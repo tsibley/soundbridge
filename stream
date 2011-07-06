@@ -1,11 +1,16 @@
 #!/bin/bash
 dst=$1
-src=${2:-Banshee}
-inputidx=$(find-sink-input "$src")
+shift
+src=${1:-Banshee}
 
-if [[ -z $inputidx ]]; then
-    echo Unable to find sink input index for $src
-    exit 1
+# This is ugly, but I don't want to refactor it right now
+if [[ $dst != "preset" ]]; then
+    inputidx=$(find-sink-input "$src")
+
+    if [[ -z $inputidx ]]; then
+        echo Unable to find sink input index for $src
+        exit 1
+    fi
 fi
 
 case "$dst" in
@@ -20,6 +25,10 @@ case "$dst" in
         gconftool -s --type bool /system/pulseaudio/modules/raop-discover/enabled true
         sleep 5
         pacmd set-sink-mute $sink 0 >/dev/null
+        ;;
+    preset)
+        play-preset "$@"
+        exit
         ;;
     alsa|local|hw|off)
         sink=0
