@@ -32,7 +32,7 @@ cmd 'ListPresets' => parse {
     push @presets, $_;
 };
 
-if (my $play = shift @ARGV) {
+if (my $play = join ' ', @ARGV) {
     my $index = $play =~ /\D/
                     ? firstidx { /$play/i } @presets
                     : $play - 1;
