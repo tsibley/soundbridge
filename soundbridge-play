@@ -25,7 +25,7 @@ my $xml = XML::Simple->new(
 );
 
 my $cp = Net::UPnP::ControlPoint->new;
-my @devices = $cp->search(mx => 1);
+my @devices = $cp->search(mx => 2);
 
 my $src = find_device MediaServer   => 'Gst Launch',  @devices;
 my $dst = find_device MediaRenderer => 'Soundbridge', @devices;
