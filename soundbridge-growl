@@ -1,0 +1,58 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+
+use IO::Socket::INET;
+use constant ICON => "$ENV{HOME}/projects/soundbridge/assets/M1001icon.png";
+
+my $sock = IO::Socket::INET->new('soundbridge.local:5555')
+    or die "Unable to bind to soundbridge: $!";
+
+die "Huh?" unless $sock->getline =~ /roku: ready/;
+
+my $current = '';
+
+while (not $sock->error) {
+    $sock->print("GetCurrentSongInfo\n");
+
+    my %data;
+    while ($_ = $sock->getline) {
+        #GetCurrentSongInfo: id: Preset 5
+        #GetCurrentSongInfo: remoteStream: 1
+        #GetCurrentSongInfo: format: remotePLS
+        #GetCurrentSongInfo: status: playable
+        #GetCurrentSongInfo: title: Jim Bianco - Talented
+        #GetCurrentSongInfo: artist: 89.9 KCRW Eclectic Music - Santa Monica
+        #GetCurrentSongInfo: songFormat: pls
+        #GetCurrentSongInfo: playlistURL: http://media.kcrw.com/live/kcrwmusic.pls
+        #GetCurrentSongInfo: resource[0] url: http://205.188.234.2:80/stream/1045
+        #GetCurrentSongInfo: resource[0] format: unknown
+        #GetCurrentSongInfo: OK
+        s/^GetCurrentSongInfo:\s*//;
+        s/[\r\n]//g;
+        last if /^OK/;
+
+        my ($key, $val) = split /: /, $_, 2;
+        $val =~ s/(?:^\s*|\s*$)//;
+        $data{$key} = $val;
+    }
+
+    $data{album} = '' if not exists $data{album};
+
+    if ($data{playlistURL} =~ /kcrwmusic\.pls/) {
+        @data{qw(artist title)} = split / - /, $data{title}, 2;
+    }
+
+    my $playing = sprintf "%s by %s from %s", @data{qw(title artist album)};
+
+    if ($playing ne $current) {
+        $current = $playing;
+        system 'notify-send', '--icon', ICON, $data{title}, join "\n", grep { defined and length } @data{qw(artist album)}
+            unless $data{artist} =~ /kcrw/i;
+    }
+    
+    sleep 10;
+}
+
+$sock->close;
+
