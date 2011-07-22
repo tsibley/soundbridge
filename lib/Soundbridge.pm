@@ -23,7 +23,7 @@ has socket => (
 has log_level => (
     is  => 'rw',
     isa => 'Int',
-    default => 0,
+    default => 1,
 );
 
 method BUILD {
@@ -66,14 +66,14 @@ sub rcp ($$;$) {
         s/[\r\n]//g;
         $code->($_) if $code;
         $self->debug("<-- $_");
-        warn "$cmd: $_\n" if /Error|Failed|UnknownCommand/;
+        warn "$cmd: $_\n" if /Error|Failed|UnknownCommand/ and $self->log_level;
         last if /(?:^ListResultEnd|^OK|^TransactionComplete|Error|Failed|UnknownCommand)/;
     }
 }
 sub parse (&) { $_[0] }
 
 method debug {
-    return unless $self->log_level;
+    return unless $self->log_level > 1;
     warn @_, "\n";
 }
 
