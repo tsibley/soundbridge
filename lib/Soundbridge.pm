@@ -66,8 +66,8 @@ sub rcp ($$;$) {
         s/[\r\n]//g;
         $code->($_) if $code;
         $self->debug("<-- $_");
-        warn "$cmd: $_\n" if /Error|UnknownCommand/;
-        last if /^(?:ListResultEnd|OK|TransactionComplete|.*Error|UnknownCommand)/;
+        warn "$cmd: $_\n" if /Error|Failed|UnknownCommand/;
+        last if /(?:^ListResultEnd|^OK|^TransactionComplete|Error|Failed|UnknownCommand)/;
     }
 }
 sub parse (&) { $_[0] }
