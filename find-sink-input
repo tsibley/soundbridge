@@ -1,0 +1,5 @@
+#!/bin/bash
+pattern=$1
+pacmd list-sink-inputs | \
+    perl -nle '$lastindex = $1  if /^\s*index: (\d+)/;
+               print $lastindex if /^\s*client: \d+ <.*?(?i:'"$pattern"').*?>/'

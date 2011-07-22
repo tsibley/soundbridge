@@ -1,0 +1,5 @@
+#!/bin/bash
+pattern=$1
+pacmd list-modules | \
+    perl -nle '$lastindex = $1  if /^\s*index: (\d+)/;
+               print $lastindex if /^\s*name: <.*?'"$pattern"'.*?>/'
