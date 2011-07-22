@@ -20,6 +20,12 @@ has socket => (
     isa => 'Object',
 );
 
+has log_level => (
+    is  => 'rw',
+    isa => 'Int',
+    default => 0,
+);
+
 method BUILD {
     $self->connect;
     my $hello = $self->socket->getline;
@@ -35,10 +41,12 @@ method connect {
     my $sock = IO::Socket::INET->new($self->server)
         or die "Unable to bind to ",$self->server,": $!";
     $self->socket($sock);
+    $self->debug("Connected to ", $self->server);
 }
 
 method disconnect {
     $self->socket->close;
+    $self->debug("Disconnected from ", $self->server);
 }
 
 method send($text) {
@@ -52,15 +60,22 @@ sub rcp ($$;$) {
     my $pre  = (split / /, $cmd, 2)[0];
 
     $self->socket->print("$cmd\n");
+    $self->debug("==> $cmd");
     while ($_ = $self->socket->getline) {
         s/^\Q$pre\E:\s*//;
         s/[\r\n]//g;
         $code->($_) if $code;
+        $self->debug("<-- $_");
         warn "$cmd: $_\n" if /Error|UnknownCommand/;
         last if /^(?:ListResultEnd|OK|TransactionComplete|.*Error|UnknownCommand)/;
     }
 }
 sub parse (&) { $_[0] }
+
+method debug {
+    return unless $self->log_level;
+    warn @_, "\n";
+}
 
 no Moose;
 
