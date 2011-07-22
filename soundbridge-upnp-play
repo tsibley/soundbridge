@@ -8,6 +8,8 @@ use XML::Simple;
 use HTML::Entities;
 use Net::UPnP::ControlPoint;
 use Net::UPnP::AV::MediaRenderer;
+use Soundbridge;
+use URI;
 
 sub find_device($$@) {
     my $type = shift;
@@ -65,6 +67,16 @@ print "Playing '$name' over the soundbridge\n";
 
 # Remove extraneous metadata
 delete $items->{$_} for grep { $_ ne $name } keys %$items;
+
+# Use RCP to connect the soundbrige to the special Radio "server".
+# The device must be connected to a server or it won't play UPnP audio.
+my $host = URI->new($dst->getlocation)->host;
+Soundbridge->new( server => "$host:5555", log_level => 0 )->send(<<'.');
+ServerDisconnect
+SetServerFilter radio
+ListServers
+ServerConnect 0
+.
 
 # Let's go!
 my $renderer = Net::UPnP::AV::MediaRenderer->new;
