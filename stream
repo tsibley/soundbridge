@@ -13,25 +13,34 @@ if [[ $dst != "preset" ]]; then
     fi
 fi
 
+function move_to_sink() {
+    # takes only a sink
+    echo "Streaming $src ($inputidx) to $dst ($1)"
+    pactl move-sink-input $inputidx $1
+}
+
 case "$dst" in
     home|soundbridge|sb)
         sink='streaming'
         pacmd set-sink-mute $sink 0 >/dev/null
         pacmd set-source-mute $sink.monitor 0 >/dev/null
         soundbridge-upnp-play $sink
+        move_to_sink $sink
         ;;
     bps|work|office)
         sink='raop.Conference-Room.local'
         gconftool -s --type bool /system/pulseaudio/modules/raop-discover/enabled true
         sleep 5
         pacmd set-sink-mute $sink 0 >/dev/null
+        move_to_sink $sink
         ;;
     preset)
         play-preset "$@"
         exit
         ;;
-    alsa|local|hw|off)
-        sink=0
+    alsa|local|hw|off|stop)
+        move_to_sink 0
+        gconftool -s --type bool /system/pulseaudio/modules/raop-discover/enabled false
         ;;
     *)
         echo "Uh, what?"
@@ -39,10 +48,3 @@ case "$dst" in
         ;;
 esac
 
-echo "Streaming $src ($inputidx) to $dst ($sink)"
-pactl move-sink-input $inputidx $sink
-
-# After moving the sink away, turn off some pulse features
-if [[ $sink == 0 ]]; then
-    gconftool -s --type bool /system/pulseaudio/modules/raop-discover/enabled false
-fi
