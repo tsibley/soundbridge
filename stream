@@ -32,7 +32,6 @@ case "$dst" in
         ;;
     alsa|local|hw|off)
         sink=0
-        gconftool -s --type bool /system/pulseaudio/modules/raop-discover/enabled false
         ;;
     *)
         echo "Uh, what?"
@@ -42,3 +41,8 @@ esac
 
 echo "Streaming $src ($inputidx) to $dst ($sink)"
 pactl move-sink-input $inputidx $sink
+
+# After moving the sink away, turn off some pulse features
+if [[ $sink == 0 ]]; then
+    gconftool -s --type bool /system/pulseaudio/modules/raop-discover/enabled false
+fi
