@@ -56,7 +56,7 @@ my $result = $xml->XMLin($action->getargumentlist->{'Result'})
 
 my $items  = $result->{'DIDL-Lite'}[0]{'item'};
 my $name   = shift || 'streaming';
-my $stream = first { /LPCM/ }
+my $stream = first { /MP3/ }     # use MP3 instead?
                map { $_->{'content'} }
                    @{$items->{$name}{'res'}};
 
