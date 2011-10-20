@@ -6,7 +6,7 @@ package Soundbridge;
 use Any::Moose;
 use Sub::Exporter -setup => { exports => [ qw(rcp parse) ] };
 use IO::Socket::INET;
-use Method::Signatures;
+use Method::Signatures::Simple;
 use Carp qw(croak);
 
 has server => (
