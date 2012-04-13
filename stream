@@ -4,7 +4,7 @@ shift
 src=${1:-spotify}
 
 # This is ugly, but I don't want to refactor it right now
-if [[ $dst != "preset" ]]; then
+if [[ $dst != "preset" && $dst != "from" ]]; then
     inputidx=$(find-sink-input "$src")
 
     if [[ -z $inputidx ]]; then
@@ -42,6 +42,14 @@ case "$dst" in
         move_to_sink 0
         gconftool -s --type bool /system/pulseaudio/modules/raop-discover/enabled false
         ;;
+    from)
+        if [[ $src == "home" ]]; then
+            echo "Proxying to bloop; connect to localhost:3689"
+            banshee >/dev/null 2>&1 &
+            ssh -NL 3689:localhost:3689 bloop.zulutango.org
+            exit
+        fi
+        ;&
     *)
         echo "Uh, what?"
         exit 1
