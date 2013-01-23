@@ -4,8 +4,8 @@ shift
 src=${1:-spotify}
 
 # This is ugly, but I don't want to refactor it right now
-if [[ $dst != "preset" && $dst != "from" ]]; then
-    inputidx=$(find-sink-input "$src")
+if [[ $dst != "preset" && $dst != "from" && $dst != "vol" ]]; then
+    inputidx=$(find-sink-input "$src" | head -n1)
 
     if [[ -z $inputidx ]]; then
         echo Unable to find sink input index for $src
@@ -36,6 +36,10 @@ case "$dst" in
         ;;
     preset)
         play-preset "$@"
+        exit
+        ;;
+    vol)
+        soundbridge-volume "$@"
         exit
         ;;
     alsa|local|hw|off|stop)

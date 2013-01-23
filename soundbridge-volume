@@ -1,0 +1,29 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use open qw/ :utf8 :std /;
+use utf8;
+use feature qw(say switch);
+
+use Soundbridge;
+
+my $sb     = Soundbridge->new;
+my $volume = shift @ARGV;
+
+my ($current) = $sb->get("Volume");
+
+if (defined $volume and $volume =~ /^([+-])(\d+)$/) {
+    my ($op, $amount) = ($1, $2);
+    $volume = $current;
+    given ($op) {
+        $volume -= $amount when "-";
+        $volume += $amount when "+";
+    }
+}
+
+if (defined $volume and $volume != $current) {
+    my ($result) = $sb->set("Volume", $volume);
+    say "$current → $volume" if $result eq "OK";
+} else {
+    say $current;
+}
