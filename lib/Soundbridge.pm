@@ -88,6 +88,7 @@ method debug {
     warn @_, "\n";
 }
 
+Soundbridge->meta->make_immutable;
 no Moose;
 
 1;
