@@ -49,6 +49,14 @@ method disconnect {
     $self->debug("Disconnected from ", $self->server);
 }
 
+method get($cmd, @params) {
+    $self->rcp(join " ", "Get$cmd", @params);
+}
+
+method set($cmd, @params) {
+    $self->rcp(join " ", "Set$cmd", @params);
+}
+
 method send($text) {
     $self->rcp($_) for split /\n/, $text;
 }
@@ -58,6 +66,7 @@ sub rcp ($$;$) {
     my $cmd  = shift;
     my $code = shift;
     my $pre  = (split / /, $cmd, 2)[0];
+    my @result;
 
     $self->socket->print("$cmd\n");
     $self->debug("==> $cmd");
@@ -65,10 +74,13 @@ sub rcp ($$;$) {
         s/^\Q$pre\E:\s*//;
         s/[\r\n]//g;
         $code->($_) if $code;
+        push @result, $_;
         $self->debug("<-- $_");
         warn "$cmd: $_\n" if /Error|Failed|UnknownCommand/ and $self->log_level;
         last if /(?:^ListResultEnd|^OK|^TransactionComplete|Error|Failed|UnknownCommand)/;
+        last if $cmd =~ /^Get/; # XXX: stops at first result line!
     }
+    return wantarray ? @result : \@result;
 }
 sub parse (&) { $_[0] }
 
