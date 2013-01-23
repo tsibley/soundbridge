@@ -1,0 +1,13 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use open qw/ :utf8 :std /;
+use utf8;
+use feature qw(say);
+
+use Soundbridge;
+my $sb = Soundbridge->new;
+
+for my $cmd (@ARGV) {
+    say for $sb->rcp($cmd);
+}

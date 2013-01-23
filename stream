@@ -3,15 +3,18 @@ dst=$1
 shift
 src=${1:-spotify}
 
-# This is ugly, but I don't want to refactor it right now
-if [[ $dst != "preset" && $dst != "from" && $dst != "vol" ]]; then
-    inputidx=$(find-sink-input "$src" | head -n1)
-
-    if [[ -z $inputidx ]]; then
-        echo Unable to find sink input index for $src
-        exit 1
-    fi
-fi
+case "$dst" in
+    preset|from|vol|power)
+        # These take arguments other than pulseaudio input sinks
+        ;;
+    *)
+        inputidx=$(find-sink-input "$src" | head -n1)
+        if [[ -z $inputidx ]]; then
+            echo Unable to find sink input index for $src
+            exit 1
+        fi
+        ;;
+esac
 
 function move_to_sink() {
     # takes only a sink
@@ -45,6 +48,16 @@ case "$dst" in
     alsa|local|hw|off|stop)
         move_to_sink 0
         gconftool -s --type bool /system/pulseaudio/modules/raop-discover/enabled false
+        ;;
+    power)
+        case $src in
+            off|stop)
+                soundbridge-rcp "SetPowerState standby"
+                ;;
+            reboot)
+                soundbridge-rcp "Reboot"
+                ;;
+        esac
         ;;
     from)
         if [[ $src == "home" ]]; then
