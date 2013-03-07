@@ -78,7 +78,6 @@ sub rcp ($$;$) {
         $self->debug("<-- $_");
         warn "$cmd: $_\n" if /Error|Failed|UnknownCommand/ and $self->log_level;
         last if /(?:^ListResultEnd|^OK|^TransactionComplete|Error|Failed|UnknownCommand)/;
-        last if $cmd =~ /^Get/; # XXX: stops at first result line!
     }
     return wantarray ? @result : \@result;
 }
