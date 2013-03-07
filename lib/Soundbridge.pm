@@ -72,12 +72,12 @@ sub rcp ($$;$) {
     while ($_ = $self->socket->getline) {
         s/^\Q$pre\E:\s*//;
         s/[\r\n]//g;
-        $code->($_) if $code;
-        push @result, $_
-            if not /^ListResult/ and /\S/;
         $self->debug("<-- $_");
+        $code->($_) if $code;
         warn "$cmd: $_\n" if /Error|Failed|UnknownCommand/ and $self->log_level;
         last if /(?:^ListResultEnd|^OK|^TransactionComplete|Error|Failed|UnknownCommand)/;
+        push @result, $_
+            if not /^ListResult/ and /\S/;
     }
     return wantarray ? @result : \@result;
 }
