@@ -50,6 +50,7 @@ method connect {
 }
 
 method disconnect {
+    return unless $self->socket;
     $self->socket->close;
     $self->debug("Disconnected from ", $self->server);
 }
