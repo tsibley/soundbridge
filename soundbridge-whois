@@ -13,10 +13,12 @@ my $volume = shift @ARGV;
 # Suppress warnings about errors when the device is off
 $sb->log_level(0);
 
-my ($title) = grep { s/^title: +// } $sb->get("CurrentSongInfo");
+my @song = $sb->get("CurrentSongInfo");
+my ($title)  = grep { s/^title: +//  } @song;
+my ($artist) = grep { s/^artist: +// } @song;
 
-if (defined $title and length $title) {
-    say "🎶  $title";
+if ($title or $artist) {
+    say "🎶  " . join "\n   ", grep { $_ } $artist, $title;
 } else {
     say "🔇  Not playing.";
 }
