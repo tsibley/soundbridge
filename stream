@@ -4,7 +4,7 @@ shift
 src=${1:-spotify}
 
 case "$dst" in
-    preset|from|vol|power|whois)
+    preset|from|vol|power|whois|playing)
         # These take arguments other than pulseaudio input sinks
         ;;
     *)
@@ -45,7 +45,7 @@ case "$dst" in
         soundbridge-volume "$@"
         exit
         ;;
-    whois)
+    whois|playing)
         soundbridge-whois
         exit
         ;;
