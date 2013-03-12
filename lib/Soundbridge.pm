@@ -19,6 +19,12 @@ has socket => (
     isa => 'Object',
 );
 
+has timeout => (
+    is  => 'rw',
+    isa => 'Int',
+    default => 1,
+);
+
 has log_level => (
     is  => 'rw',
     isa => 'Int',
@@ -69,15 +75,43 @@ sub rcp ($$;$) {
 
     $self->socket->print("$cmd\n");
     $self->debug("==> $cmd");
-    while ($_ = $self->socket->getline) {
-        s/^\Q$pre\E:\s*//;
-        s/[\r\n]//g;
-        $self->debug("<-- $_");
-        $code->($_) if $code;
-        warn "$cmd: $_\n" if /Error|Failed|UnknownCommand/ and $self->log_level;
-        last if /(?:^ListResultEnd|^OK|^TransactionComplete|Error|Failed|UnknownCommand)/;
-        push @result, $_
-            if not /^ListResult/ and /\S/;
+
+    eval {
+        local $SIG{ALRM} = sub { die "TIMEOUT\n" };
+        alarm $self->timeout;
+
+        while ($_ = $self->socket->getline) {
+            alarm 0;
+
+            s/^\Q$pre\E:\s*//;
+            s/[\r\n]//g;
+            $self->debug("<-- $_");
+            $code->($_) if $code;
+
+            if (/(?:^ListResultEnd|^OK|^TransactionComplete|Error|Failed|UnknownCommand)/) {
+                # Set commands should ACK an OK
+                push @result, $_ if $cmd =~ /^Set/ and $_ eq "OK";
+
+                warn "$cmd: $_\n"
+                    if /Error|Failed|UnknownCommand/
+                   and $self->log_level;
+
+                last;
+            }
+            elsif (/^ListResult/) {
+                # We don't use the list start/end markers
+                next;
+            }
+            elsif (/\S/) {
+                push @result, $_;
+            }
+        } continue {
+            alarm $self->timeout;
+        }
+    };
+    if ($@) {
+        die unless $@ eq "TIMEOUT\n";
+        $self->debug("Timed out reading from socket");
     }
     return wantarray ? @result : \@result;
 }
