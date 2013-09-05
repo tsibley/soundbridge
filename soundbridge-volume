@@ -21,7 +21,7 @@ if (defined $volume and $volume =~ /^([+-])(\d+)$/) {
     }
 }
 
-if (defined $volume and $volume != $current) {
+if (defined $volume and $volume =~ /^\d+$/ and $volume != $current) {
     my ($result) = $sb->set("Volume", $volume);
     say "$current → $volume" if $result eq "OK";
 } else {
