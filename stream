@@ -1,13 +1,23 @@
 #!/bin/bash
 dst=$1
 shift
-src=${1:-spotify}
+
+shopt -qs extglob
 
 case "$dst" in
-    preset|from|vol|power|whois|playing)
+    preset|from|power|whois|playing)
         # These take arguments other than pulseaudio input sinks
         ;;
+    ?([+-])+([0-9]))
+        vol="$dst"
+        dst="vol"
+        ;;
+    vol)
+        vol=$1
+        ;;
     *)
+        src=${1:-spotify}
+        shift
         inputidx=$(find-sink-input "$src" | head -n1)
         if [[ -z $inputidx ]]; then
             echo Unable to find sink input index for $src
@@ -42,7 +52,7 @@ case "$dst" in
         exit
         ;;
     vol)
-        soundbridge-volume "$@"
+        soundbridge-volume "$vol"
         exit
         ;;
     whois|playing)
@@ -54,7 +64,7 @@ case "$dst" in
         gconftool -s --type bool /system/pulseaudio/modules/raop-discover/enabled false
         ;;
     power)
-        case $src in
+        case $1 in
             off|stop)
                 soundbridge-rcp "SetPowerState standby"
                 ;;
@@ -64,7 +74,7 @@ case "$dst" in
         esac
         ;;
     from)
-        if [[ $src == "home" ]]; then
+        if [[ $1 == "home" ]]; then
             echo "Proxying to bloop; connect to localhost:3689"
             banshee >/dev/null 2>&1 &
             ssh -NL 3689:localhost:3689 bloop.zulutango.org
