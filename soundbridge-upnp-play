@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
+use 5.010;
 
 use Data::Dumper;
 use List::Util qw(first);
@@ -21,13 +22,16 @@ sub find_device($$$) {
 
     $CP ||= Net::UPnP::ControlPoint->new;
 
+    state $devices = [ $CP->search(
+        mx => 1, # this timeout is doubled by Net::UPnP::ControlPoint
+                 # in the select() call it makes (!?)
+    ) ];
+
     first {
             $_->getdevicetype   =~ /$type/
         and $_->getfriendlyname =~ /$name/i
-    } $CP->search(
-        $st ? (st => $st) : (),
-        mx => 1,
-    );
+        and (not $st or $_->getudn eq $st)
+    } @$devices;
 }
 
 my $xml = XML::Simple->new(
