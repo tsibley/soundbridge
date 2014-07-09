@@ -35,10 +35,12 @@ my $xml = XML::Simple->new(
     KeepRoot    => 1,
 );
 
-unless (`pidof rygel`) {
-    system "rygel 2>&1 | logger -t rygel &";
-    sleep 1;
+if (my $pid = `pidof rygel`) {
+    chomp $pid;
+    kill 'TERM', $pid or die "Failed to kill rygel ($pid)\n";
 }
+system "rygel 2>&1 | logger -t rygel &";
+sleep 1;
 
 my $src = find_device MediaServer   => 'Gst Launch', 'uuid:556a1528-e666-44ad-85c3-da31d25807c4';
 my $dst = find_device MediaRenderer => 'Soundbridge', 'uuid:526F6B75-536F-756E-6442-000D4B041635';
