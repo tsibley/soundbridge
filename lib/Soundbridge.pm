@@ -7,6 +7,7 @@ use Any::Moose;
 use IO::Socket::INET;
 use Method::Signatures::Simple;
 use Carp qw(croak);
+use Time::HiRes qw(alarm);
 
 has server => (
     is      => 'rw',
@@ -21,8 +22,8 @@ has socket => (
 
 has timeout => (
     is  => 'rw',
-    isa => 'Int',
-    default => 1,
+    isa => 'Num',
+    default => 0.1,
 );
 
 has log_level => (
