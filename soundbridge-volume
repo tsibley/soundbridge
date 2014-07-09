@@ -3,7 +3,8 @@ use strict;
 use warnings;
 use open qw/ :utf8 :std /;
 use utf8;
-use feature qw(say switch);
+use feature 'say';
+use experimental 'switch';
 
 use Soundbridge;
 
