@@ -13,11 +13,8 @@ if (my $play = join ' ', @ARGV) {
     my $index = $play =~ /\D/
                     ? firstidx { /$play/i } @presets
                     : $play - 1;
-    {
-        local $| = 1;
-        print "Playing $presets[$index]... ";
-    }
-    say for $sb->rcp("PlayPreset $index");
+    say "Playing $presets[$index]... ";
+    $sb->rcp("PlayPreset $index");
 } else {
-    print $_+1, ". $presets[$_]\n" for 0..$#presets;
+    say $_+1, ". $presets[$_]" for 0..$#presets;
 }
