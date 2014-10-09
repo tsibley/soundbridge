@@ -39,7 +39,7 @@ while (not $sock->error) {
 
     $data{album} = '' if not exists $data{album};
 
-    if ($data{playlistURL} =~ /kcrwmusic\.pls/) {
+    if ($data{playlistURL} and $data{playlistURL} =~ /kcrwmusic\.pls/) {
         @data{qw(artist title)} = split / - /, $data{title}, 2;
     }
 
