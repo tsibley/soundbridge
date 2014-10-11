@@ -3,33 +3,35 @@ use warnings;
 
 package Soundbridge;
 
-use Any::Moose;
+use Moo;
 use IO::Socket::INET;
 use Method::Signatures::Simple;
+use Types::Standard qw( Str Object Num Int );
 use Carp qw(croak);
 use Time::HiRes qw(alarm);
+use namespace::clean;
 
 has server => (
     is      => 'rw',
-    isa     => 'Str',
-    default => 'soundbridge.local:5555',
+    isa     => Str,
+    default => sub { 'soundbridge.local:5555' },
 );
 
 has socket => (
     is  => 'rw',
-    isa => 'Object',
+    isa => Object,
 );
 
 has timeout => (
     is  => 'rw',
-    isa => 'Num',
-    default => 0.1,
+    isa => Num,
+    default => sub { 0.1 },
 );
 
 has log_level => (
     is  => 'rw',
-    isa => 'Int',
-    default => 1,
+    isa => Int,
+    default => sub { 1 },
 );
 
 method BUILD {
@@ -123,8 +125,5 @@ method debug {
     return unless $self->log_level > 1;
     warn @_, "\n";
 }
-
-Soundbridge->meta->make_immutable;
-no Moose;
 
 1;
