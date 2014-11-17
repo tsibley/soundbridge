@@ -12,6 +12,7 @@ my $sb     = Soundbridge->new;
 my $volume = shift @ARGV;
 
 my ($current) = $sb->get("Volume");
+$current //= '?';
 
 if (defined $volume and $volume =~ /^([+-])(\d+)$/) {
     my ($op, $amount) = ($1, $2);
@@ -24,7 +25,11 @@ if (defined $volume and $volume =~ /^([+-])(\d+)$/) {
 
 if (defined $volume and $volume =~ /^\d+$/ and $volume != $current) {
     my ($result) = $sb->set("Volume", $volume);
-    say "$current → $volume" if $result eq "OK";
+    if ($result and $result eq "OK") {
+        say "$current → $volume";
+    } else {
+        warn "something didn't work, try again?\n";
+    }
 } else {
     say $current;
 }
