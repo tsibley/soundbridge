@@ -16,13 +16,28 @@ case "$dst" in
         vol=$1
         ;;
     *)
-        src=${1:-spotify}
-        shift
-        inputidx=$(find-sink-input "$src" | head -n1)
+        src=$1
+        src_default=spotify
+
+        # Find the source asked for, or our default if none was asked for.  Set
+        # src to how we found the input, if we found it.
+        inputidx=$(find-sink-input "${src:-$src_default}")
+        [[ -n $inputidx ]] && src=${src:-$src_default}
+
+        # If nothing was asked for and we couldn't find the default either, see
+        # if there are *any* inputs available.  Set our src to distinguish it's
+        # fallback status in messages.
+        if [[ -z $inputidx && -z $src ]]; then
+            inputidx=$(find-sink-input)
+            src="whatever's playing"
+        fi
+
+        # Still found nothing!
         if [[ -z $inputidx ]]; then
-            echo Unable to find sink input index for $src
+            echo "Unable to find sink input index for $src"
             exit 1
         fi
+        shift
         ;;
 esac
 
