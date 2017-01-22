@@ -70,7 +70,7 @@ method send($text) {
     $self->rcp($_) for split /\n/, $text;
 }
 
-sub rcp ($$;$) {
+sub rcp {
     my $self = shift;
     my $cmd  = shift;
     my $code = shift;
@@ -94,7 +94,7 @@ sub rcp ($$;$) {
 
             if (/(?:^ListResultEnd|^OK|^TransactionComplete|Error|Failed|UnknownCommand)/) {
                 # Set commands should ACK an OK
-                push @result, $_ if $cmd =~ /^Set/ and $_ eq "OK";
+                push @result, $_ if $cmd =~ /^Set/ and $_ =~ /^OK/;
 
                 warn "$cmd: $_\n"
                     if /Error|Failed|UnknownCommand/
@@ -112,6 +112,7 @@ sub rcp ($$;$) {
         } continue {
             alarm $self->timeout;
         }
+        alarm 0;
     };
     if ($@) {
         die unless $@ eq "TIMEOUT\n";
