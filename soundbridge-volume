@@ -8,13 +8,20 @@ use experimental 'switch';
 
 use Soundbridge;
 
-my $sb     = Soundbridge->new;
+my $sb     = Soundbridge->new( timeout => 0.2 );
 my $volume = shift @ARGV;
 
-my ($current) = $sb->get("Volume");
-$current //= '?';
+my $attempt = 1;
+my $current;
+while (not defined $current or $attempt <= 3) {
+    ($current) = $sb->get("Volume");
+    $attempt++;
+}
 
 if (defined $volume and $volume =~ /^([+-])(\d+)$/) {
+    die "😞  I couldn’t get the current volume to adjust!\n"
+        if not defined $current;
+ 
     my ($op, $amount) = ($1, $2);
     $volume = $current;
     given ($op) {
@@ -23,12 +30,14 @@ if (defined $volume and $volume =~ /^([+-])(\d+)$/) {
     }
 }
 
+$current //= 0;
+
 if (defined $volume and $volume =~ /^\d+$/ and $volume != $current) {
+    say "$current → $volume";
     my ($result) = $sb->set("Volume", $volume);
-    if ($result and $result eq "OK") {
-        say "$current → $volume";
-    } else {
-        warn "something didn't work, try again?\n";
+    unless ($result and $result eq "OK") {
+        warn "😞  Something didn't work, try again?\n";
+        warn "  result = $result\n";
     }
 } else {
     say $current;
