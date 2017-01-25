@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Soundbridge Remote</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+	  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+    <style type="text/css">
+      body {
+        margin: 20px;
+      }
+      #presets {
+        position: relative;
+        text-align: right;
+      }
+      #presets button {
+        margin: 5px 0;
+        float: right;
+        clear: right;
+      }
+
+      #controls {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 10px 20px;
+        background: #eee;
+        border-top: 1px solid #ccc;
+
+        text-align: right;
+      }
+
+      #controls button.power {
+        float: left;
+      }
+    </style>
+  </head>
+  <body>
+    <form id="form-preset-eclectic24" method="POST" action="/play/preset/Eclectic24"></form>
+    <form id="form-preset-jazz24"     method="POST" action="/play/preset/Jazz+24"></form>
+    <form id="form-play-remote"       method="POST" action="/play/remote"></form>
+    <form id="form-playpause"         method="POST" action="/playpause"></form>
+    <form id="form-volume-up"         method="POST" action="/ir/volume/up"></form>
+    <form id="form-volume-down"       method="POST" action="/ir/volume/down"></form>
+    <form id="form-power"             method="POST" action="/ir/power"></form>
+
+    <div id="presets">
+      <button form="form-preset-eclectic24" type="submit" class="btn btn-default btn-primary">
+        <span class="glyphicon glyphicon-play"></span>
+        Eclectic24
+      </button>
+
+      <button form="form-preset-jazz24" type="submit" class="btn btn-default btn-primary">
+        <span class="glyphicon glyphicon-play"></span>
+        Jazz 24
+      </button>
+
+      <button form="form-play-remote" type="submit" class="btn btn-default btn-primary">
+        <span class="glyphicon glyphicon-play"></span>
+        Remote from plink
+      </button>
+    </div>
+
+    <div id="controls">
+      <button form="form-power" type="submit" class="btn btn-default btn-lg power btn-danger">
+        <span class="glyphicon glyphicon-off"></span>
+      </button>
+      <button form="form-volume-down" type="submit" class="btn btn-default btn-lg btn-info">
+        🔉
+      </button>
+      <button form="form-volume-up" type="submit" class="btn btn-default btn-lg btn-info">
+        🔊 
+      </button>
+      <button form="form-playpause" type="submit" class="btn btn-default btn-lg btn-success">
+        <span class="glyphicon glyphicon-play"></span><span class="glyphicon glyphicon-pause"></span>
+      </button>
+    </div>
+  <body>
+</html>
