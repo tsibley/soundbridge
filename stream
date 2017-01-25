@@ -86,6 +86,9 @@ case "$dst" in
             reboot)
                 soundbridge-rcp "Reboot"
                 ;;
+            *)
+                soundbridge-rcp "IrDispatchCommand CK_POWER"
+                ;;
         esac
         ;;
     from)
