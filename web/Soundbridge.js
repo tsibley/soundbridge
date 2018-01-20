@@ -3,12 +3,13 @@
   'use strict';
 
   class Soundbridge {
-    constructor($http, $interval, $log) {
+    constructor($http, $interval, debounce, $log) {
       if (Soundbridge.$instance)
         return Soundbridge.$instance;
 
       this.$http     = $http;
       this.$interval = $interval;
+      this.$debounce = debounce;
       this.$log      = $log;
 
       $log.debug("Soundbridge — Let the music play!");
@@ -73,6 +74,36 @@
         .then( this.updateStateFromResponse() );
     }
 
+    // This getter/setter combo is a little wonky still with fetchState, but
+    // I'll fix it later.
+    get volume() {
+      if (this._pendingVolume != null)
+        return this._pendingVolume;
+
+      else if (this.state)
+        return this.state.volume;
+
+      else
+        return undefined;
+    }
+
+    set volume(vol) {
+      // First time through, create our debounced setter.
+      if (!this._setVolume) {
+        this._setVolume = this.$debounce(
+          1000,
+          function(vol) {
+            this.setVolume(vol)
+              .finally( () => delete this._pendingVolume )
+          }
+        );
+      }
+
+      this.$log.debug("Pending volume change =", vol);
+      this._pendingVolume = vol;
+      this._setVolume.call(this, vol);
+    }
+
     setVolume(vol) {
       this.$log.debug("Setting volume");
 
@@ -100,6 +131,6 @@
 
   angular
     .module('Soundbridge')
-    .service('Soundbridge', ['$http', '$interval', '$log', Soundbridge]);
+    .service('Soundbridge', ['$http', '$interval', 'debounce', '$log', Soundbridge]);
 
 })();

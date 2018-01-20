@@ -10,6 +10,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.17/angular-filter.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"></script>
+    <script type="text/javascript" src="vendor/angular-debounce.min.js"></script>
     <script type="text/javascript" src="app.js"></script>
     <script type="text/javascript" src="components.js"></script>
     <script type="text/javascript" src="Soundbridge.js"></script>
@@ -113,18 +114,14 @@
         ng-click="soundbridge.togglePower()">
         <span class="glyphicon glyphicon-off"></span>
       </button>
-      <label class="volume-slider text-xl">
+      <label class="volume-slider text-xl" ng-if="soundbridge.volume != null">
         <span class="glyphicon hidden-xs" ng-class="{
-            'glyphicon-volume-up':   soundbridge.state.volume >= 50,
-            'glyphicon-volume-down': soundbridge.state.volume && soundbridge.state.volume < 50,
-            'glyphicon-volume-off':  soundbridge.state.volume === 0,
+            'glyphicon-volume-up':   soundbridge.volume >= 50,
+            'glyphicon-volume-down': soundbridge.volume && soundbridge.volume < 50,
+            'glyphicon-volume-off':  soundbridge.volume === 0,
           }"></span>
-        <input type="range" min="0" max="100" step="1"
-          ng-model="soundbridge.state.volume"><!--
-          XXX TODO
-          ng-model-options="{ debounce: 1000, getterSetter: false }"
-          ng-change="soundbridge.setVolume(soundbridge.state.volume)">-->
-        <span class="volume">{{ soundbridge.state.volume }}</span>
+        <input type="range" ng-model="soundbridge.volume" min="0" max="100" step="1">
+        <span class="volume">{{ soundbridge.volume }}</span>
       </label>
       <button ng-click="soundbridge.pause()" class="btn btn-lg btn-success">
         <span class="glyphicon glyphicon-play"></span><span class="glyphicon glyphicon-pause"></span>

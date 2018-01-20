@@ -3,7 +3,7 @@
   'use strict';
 
   angular
-    .module('Soundbridge', ['angular.filter', 'ui.bootstrap'])
+    .module('Soundbridge', ['angular.filter', 'ui.bootstrap', 'rt.debounce'])
     .config(configure)
     .run(init);
 
