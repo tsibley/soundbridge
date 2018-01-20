@@ -6,7 +6,7 @@ package Soundbridge;
 use Moo;
 use IO::Socket::INET;
 use Method::Signatures::Simple;
-use Types::Standard qw( Str Object Num Int );
+use Types::Standard qw( Str InstanceOf Num Int );
 use Carp qw(croak);
 use Time::HiRes qw(alarm);
 use namespace::clean;
@@ -18,8 +18,9 @@ has server => (
 );
 
 has socket => (
-    is  => 'rw',
-    isa => Object,
+    is  => 'rwp',
+    isa => InstanceOf['IO::Socket'],
+    clearer => 1,
 );
 
 has timeout => (
@@ -34,13 +35,6 @@ has log_level => (
     default => sub { 1 },
 );
 
-method BUILD {
-    $self->connect;
-    my $hello = $self->socket->getline;
-    croak "Huh?  Doesn't look like a Roku Soundbridge: $hello\n"
-        unless $hello =~ /roku: ready/;
-}
-
 method DEMOLISH {
     $self->disconnect;
 }
@@ -48,13 +42,18 @@ method DEMOLISH {
 method connect {
     my $sock = IO::Socket::INET->new($self->server)
         or die "Unable to bind to ",$self->server,": $!";
-    $self->socket($sock);
+    $self->_set_socket($sock);
     $self->debug("Connected to ", $self->server);
+
+    my $hello = $self->socket->getline;
+    croak "Huh?  Doesn't look like a Roku Soundbridge: $hello\n"
+        unless $hello =~ /roku: ready/;
 }
 
 method disconnect {
     return unless $self->socket;
     $self->socket->close;
+    $self->clear_socket;
     $self->debug("Disconnected from ", $self->server);
 }
 
@@ -63,7 +62,12 @@ method get($cmd, @params) {
 }
 
 method set($cmd, @params) {
-    $self->rcp(join " ", "Set$cmd", @params);
+    my @results = $self->rcp(join " ", "Set$cmd", @params);
+
+    die "Set$cmd error: $results[0]"
+        unless @results and $results[0] eq "OK";
+
+    return @results;
 }
 
 method send($text) {
@@ -77,13 +81,19 @@ sub rcp {
     my $pre  = (split / /, $cmd, 2)[0];
     my @result;
 
-    $self->socket->print("$cmd\n");
+    $self->connect unless $self->socket;
+    $self->socket->print("$cmd\n")
+        or die "sending to socket failed: $!";
     $self->debug("==> $cmd");
 
     eval {
         local $SIG{ALRM} = sub { die "TIMEOUT\n" };
         alarm $self->timeout;
 
+        # This should all really be rewritten properly instead of an ad-hoc
+        # mess.  There's a reasonable protocol here and if this used some
+        # buffers and checked command markers, it'd be more robust.  That said,
+        # this still works pretty well as-is.
         while ($_ = $self->socket->getline) {
             alarm 0;
 
@@ -103,7 +113,7 @@ sub rcp {
                 last;
             }
             elsif (/^ListResult/) {
-                # We don't use the list start/end markers
+                # We don't use the list start markers
                 next;
             }
             elsif (/\S/) {
@@ -116,11 +126,11 @@ sub rcp {
     };
     if ($@) {
         die unless $@ eq "TIMEOUT\n";
-        $self->debug("Timed out reading from socket");
+        $self->debug("Timed out reading from socket; will reconnect on next send");
+        $self->disconnect;
     }
     return wantarray ? @result : \@result;
 }
-sub parse (&) { $_[0] }
 
 method debug {
     return unless $self->log_level > 1;

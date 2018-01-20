@@ -1,25 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="Soundbridge">
   <head>
     <meta charset="UTF-8">
-    <title>Soundbridge Remote</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui" />
     <meta name="apple-mobile-web-app-capable" content="yes">
 
-	  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <title>Soundbridge Remote</title>
 
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.17/angular-filter.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"></script>
+    <script type="text/javascript" src="Soundbridge.js"></script>
+
+	  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <style type="text/css">
       body {
         margin: 20px;
       }
-      #presets {
-        position: relative;
-        text-align: right;
+
+      .text-lg {
+        font-size: 18px;
       }
-      #presets button {
-        margin: 5px 0;
-        float: right;
-        clear: right;
+
+      .text-xl {
+        font-size: 22px;
       }
 
       #controls {
@@ -37,47 +42,89 @@
       #controls button.power {
         float: left;
       }
+
+      .volume-slider {
+        display: inline-block;
+        position: relative;
+        top: 0.18em;
+        margin: 0 0.5em;
+        padding: 0;
+        white-space: nowrap;
+      }
+
+      .volume-slider > .glyphicon {
+        top: 4px;
+      }
+
+      .volume-slider > .volume {
+        display: inline-block;
+        min-width: 3.5ex;
+        text-align: right;
+      }
+
+      .volume-slider > input[type="range"] {
+        display: inline-block;
+        max-width: 6em;
+        min-width: 3em;
+        vertical-align: middle;
+      }
+
+      .current-song .media-object {
+        position: relative;
+        top: -4px;
+        font-size: 22px;
+      }
     </style>
   </head>
   <body>
-    <form id="form-preset-eclectic24" method="POST" action="/play/preset/Eclectic24"></form>
-    <form id="form-preset-jazz24"     method="POST" action="/play/preset/Jazz+24"></form>
-    <form id="form-play-remote"       method="POST" action="/play/remote"></form>
-    <form id="form-playpause"         method="POST" action="/playpause"></form>
-    <form id="form-volume-up"         method="POST" action="/ir/volume/up"></form>
-    <form id="form-volume-down"       method="POST" action="/ir/volume/down"></form>
-    <form id="form-power"             method="POST" action="/ir/power"></form>
-
     <div id="presets">
-      <button form="form-preset-eclectic24" type="submit" class="btn btn-default btn-primary">
-        <span class="glyphicon glyphicon-play"></span>
-        Eclectic24
-      </button>
-
-      <button form="form-preset-jazz24" type="submit" class="btn btn-default btn-primary">
-        <span class="glyphicon glyphicon-play"></span>
-        Jazz 24
-      </button>
-
-      <button form="form-play-remote" type="submit" class="btn btn-default btn-primary">
-        <span class="glyphicon glyphicon-play"></span>
-        Remote from plink
-      </button>
+      <play-preset name="'Eclectic24'">Eclectic24</play-preset>
+      <play-preset name="'Jazz 24'">Jazz 24</play-preset>
+      <play-preset name="'88.5 XPN'">88.5 XPN</play-preset>
     </div>
 
     <div id="controls">
-      <button form="form-power" type="submit" class="btn btn-default btn-lg power btn-danger">
+      <button class="power btn btn-default btn-lg"
+        ng-class="{
+          'btn-danger':  soundbridge.powerState === 'on',
+          'btn-success': soundbridge.powerState === 'off' }"
+        ng-click="soundbridge.togglePower()">
         <span class="glyphicon glyphicon-off"></span>
       </button>
-      <button form="form-volume-down" type="submit" class="btn btn-default btn-lg btn-info">
-        🔉
-      </button>
-      <button form="form-volume-up" type="submit" class="btn btn-default btn-lg btn-info">
-        🔊 
-      </button>
-      <button form="form-playpause" type="submit" class="btn btn-default btn-lg btn-success">
+      <label class="volume-slider text-xl">
+        <span class="glyphicon hidden-xs" ng-class="{
+            'glyphicon-volume-up':   soundbridge.volume >= 50,
+            'glyphicon-volume-down': soundbridge.volume && soundbridge.volume < 50,
+            'glyphicon-volume-off':  soundbridge.volume === 0,
+          }"></span>
+        <input type="range" min="0" max="100" step="1"
+          ng-model="soundbridge.volume"><!--
+          XXX TODO
+          ng-model-options="{ debounce: 1000, getterSetter: false }"
+          ng-change="soundbridge.setVolume(soundbridge.volume)">-->
+        <span class="volume">{{ soundbridge.volume }}</span>
+      </label>
+      <button ng-click="soundbridge.pause()" class="btn btn-lg btn-success">
         <span class="glyphicon glyphicon-play"></span><span class="glyphicon glyphicon-pause"></span>
       </button>
     </div>
-  <body>
+
+    <div class="current-song media" ng-switch="soundbridge.currentSong != null">
+      <div class="media-left">
+        <div class="media-object">
+          <span ng-switch-when="true">🎶 </span>
+          <span ng-switch-when="false">🔇 </span>
+        </div>
+      </div>
+      <div ng-switch-when="true" class="media-body">
+        <h4 class="media-heading">
+          {{ soundbridge.currentSong.title }}
+        </h4>
+        <p>{{ soundbridge.currentSong.artist }}</p>
+      </div>
+      <div ng-switch-when="false" class="media-body">
+        <h4 class="media-heading">Not playing</h4>
+      </div>
+    </div>
+  </body>
 </html>

@@ -6,6 +6,7 @@ package Soundbridge::Remote;
 use Moo;
 extends 'Soundbridge';
 
+use List::Util qw< first >;
 use List::MoreUtils qw< firstidx >;
 use namespace::clean;
 
@@ -13,20 +14,49 @@ use namespace::clean;
 sub ir_command {
     my $self = shift;
     my $cmd  = join "_", map { uc s/\s+/_/gr } @_;
+
+    # Only a very small character set is ok
+    $cmd =~ s/[^A-Z0-9_]//g;
+
     $self->rcp("IrDispatchCommand CK_$cmd");
 }
 
 sub reboot    { $_[0]->rcp('Reboot') }
 sub power_off { $_[0]->rcp('SetPowerState standby') }
+sub power_on  { $_[0]->rcp('SetPowerState on') }
+
+sub get_power {
+    my $self  = shift;
+    my $state = $self->rcp('GetPowerState')->[0];
+
+    return {
+        on      => "on",
+        standby => "off",
+    }->{$state} || $state;
+}
+
+sub current_song {
+    my $self   = shift;
+    my @result = $self->rcp("GetCurrentSongInfo");
+    my $title  = first { s/^title: +//  } @result;
+    my $artist = first { s/^artist: +// } @result;
+
+    return undef unless $title or $artist;
+
+    return {
+        title  => $title,
+        artist => $artist,
+    };
+}
 
 sub list_presets {
     my ($self) = @_;
     return $self->rcp('ListPresets');
 }
 
-sub play_pause {
+sub pause {
     my ($self) = @_;
-    $self->rcp("PlayPause");
+    $self->rcp("Pause");
 }
 
 sub play_preset {
@@ -49,5 +79,22 @@ sub find_preset {
     };
 }
 
+sub volume {
+    my ($self, $new) = @_;
+
+    $self->set("Volume", $new + 0)
+        if defined $new and $new =~ /^[0-9]+$/;
+
+    # Fetch and return the current volume, which we may have just set.  The
+    # responses to this are sometimes flaky, so try up to 3 times.  🙄
+    my $attempt = 1;
+    my $current;
+    while (not defined $current or $attempt <= 3) {
+        ($current) = $self->get("Volume");
+        $attempt++;
+    }
+
+    return $current;
+}
 
 1;
