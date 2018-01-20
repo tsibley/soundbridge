@@ -88,30 +88,30 @@
     <div id="controls">
       <button class="power btn btn-default btn-lg"
         ng-class="{
-          'btn-danger':  soundbridge.powerState === 'on',
-          'btn-success': soundbridge.powerState === 'off' }"
+          'btn-danger':  soundbridge.state.power === 'on',
+          'btn-success': soundbridge.state.power === 'off' }"
         ng-click="soundbridge.togglePower()">
         <span class="glyphicon glyphicon-off"></span>
       </button>
       <label class="volume-slider text-xl">
         <span class="glyphicon hidden-xs" ng-class="{
-            'glyphicon-volume-up':   soundbridge.volume >= 50,
-            'glyphicon-volume-down': soundbridge.volume && soundbridge.volume < 50,
-            'glyphicon-volume-off':  soundbridge.volume === 0,
+            'glyphicon-volume-up':   soundbridge.state.volume >= 50,
+            'glyphicon-volume-down': soundbridge.state.volume && soundbridge.state.volume < 50,
+            'glyphicon-volume-off':  soundbridge.state.volume === 0,
           }"></span>
         <input type="range" min="0" max="100" step="1"
-          ng-model="soundbridge.volume"><!--
+          ng-model="soundbridge.state.volume"><!--
           XXX TODO
           ng-model-options="{ debounce: 1000, getterSetter: false }"
-          ng-change="soundbridge.setVolume(soundbridge.volume)">-->
-        <span class="volume">{{ soundbridge.volume }}</span>
+          ng-change="soundbridge.setVolume(soundbridge.state.volume)">-->
+        <span class="volume">{{ soundbridge.state.volume }}</span>
       </label>
       <button ng-click="soundbridge.pause()" class="btn btn-lg btn-success">
         <span class="glyphicon glyphicon-play"></span><span class="glyphicon glyphicon-pause"></span>
       </button>
     </div>
 
-    <div class="current-song media" ng-switch="soundbridge.currentSong != null">
+    <div class="current-song media" ng-switch="soundbridge.state.currentSong != null">
       <div class="media-left">
         <div class="media-object">
           <span ng-switch-when="true">🎶 </span>
@@ -120,9 +120,9 @@
       </div>
       <div ng-switch-when="true" class="media-body">
         <h4 class="media-heading">
-          {{ soundbridge.currentSong.title }}
+          {{ soundbridge.state.currentSong.title }}
         </h4>
-        <p>{{ soundbridge.currentSong.artist }}</p>
+        <p>{{ soundbridge.state.currentSong.artist }}</p>
       </div>
       <div ng-switch-when="false" class="media-body">
         <h4 class="media-heading">Not playing</h4>

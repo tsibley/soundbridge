@@ -43,7 +43,7 @@ sub alias     ($path) { sub { redispatch_to $path } }
 sub dispatch_request {
     '' => 'default_charset',
 
-    'GET  + /status'        => 'status',
+    'GET  + /state'         => 'state',
     'GET  + /current-song'  => 'current_song',
 
     'POST + /play/preset/*' => 'play_preset',
@@ -73,14 +73,14 @@ sub serve_static ($self, @) {
     Plack::App::File->new( root => $self->docroot );
 }
 
-sub status ($self, @) {
+sub state ($self, @) {
     my $power = $self->sb->get_power;
 
     Json {
         power => $power,
 
         volume => $power eq 'on'
-            ? $self->sb->volume
+            ? $self->sb->volume + 0
             : 0,
 
         currentSong => $power eq 'on'
