@@ -7,9 +7,6 @@ use utf8;
 package Soundbridge::Web;
 use Web::Simple;
 
-use FindBin qw< $Bin >;
-use lib "$Bin/lib";
-
 use Encode qw< encode_utf8 >;
 use JSON::MaybeXS qw<>;
 use Path::Tiny;
@@ -31,7 +28,7 @@ has sb => (
 has docroot => (
     is      => 'ro',
     isa     => Dir,
-    default => sub { path($Bin)->child("web") },
+    default => sub { path(__FILE__)->parent(3)->child("web") },
 );
 
 
