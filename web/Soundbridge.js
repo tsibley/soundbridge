@@ -91,7 +91,7 @@
       // First time through, create our debounced setter.
       if (!this._setVolume) {
         this._setVolume = this.$debounce(
-          1000,
+          500,
           function(vol) {
             this.setVolume(vol)
               .finally( () => delete this._pendingVolume )
