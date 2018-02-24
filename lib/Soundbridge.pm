@@ -82,9 +82,13 @@ sub rcp {
     my @result;
 
     $self->connect unless $self->socket;
-    $self->socket->print("$cmd\n")
-        or die "sending to socket failed: $!";
     $self->debug("==> $cmd");
+    unless ($self->socket->print("$cmd\n")) {
+        # Try reconnecting and sending once more
+        $self->connect;
+        $self->socket->print("$cmd\n")
+            or die "sending to socket failed: $!";
+    }
 
     eval {
         local $SIG{ALRM} = sub { die "TIMEOUT\n" };
