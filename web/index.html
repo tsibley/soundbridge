@@ -18,8 +18,26 @@
 
 	  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <style type="text/css">
+      html, body {
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+      }
+
       body {
-        margin: 20px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      body > section {
+        flex: auto;
+        padding: 20px;
+      }
+
+      body > footer {
+        padding: 10px 20px;
+        background: #eee;
+        border-top: 1px solid #ccc;
       }
 
       .text-lg {
@@ -31,14 +49,6 @@
       }
 
       #controls {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        padding: 10px 20px;
-        background: #eee;
-        border-top: 1px solid #ccc;
-
         text-align: right;
       }
 
@@ -101,50 +111,53 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="white">
   </head>
   <body>
-    <div id="presets">
-      <play-preset name="'Eclectic24'">Eclectic24</play-preset>
-      <play-preset name="'Jazz 24'">Jazz 24</play-preset>
-      <play-preset name="'88.5 XPN'">88.5 XPN</play-preset>
-    </div>
+    <section>
+      <div id="presets">
+        <play-preset name="'Eclectic24'">Eclectic24</play-preset>
+        <play-preset name="'Jazz 24'">Jazz 24</play-preset>
+        <play-preset name="'88.5 XPN'">88.5 XPN</play-preset>
+      </div>
 
-    <div id="controls">
-      <button class="power btn btn-default btn-lg"
-        ng-class="{
-          'btn-danger':  soundbridge.state.power === 'on',
-          'btn-success': soundbridge.state.power === 'off' }"
-        ng-click="soundbridge.togglePower()">
-        <span class="glyphicon glyphicon-off"></span>
-      </button>
-      <label class="volume-slider text-xl" ng-if="soundbridge.volume != null">
-        <span class="glyphicon hidden-xs" ng-class="{
-            'glyphicon-volume-up':   soundbridge.volume >= 50,
-            'glyphicon-volume-down': soundbridge.volume && soundbridge.volume < 50,
-            'glyphicon-volume-off':  soundbridge.volume === 0,
-          }"></span>
-        <input type="range" ng-model="soundbridge.volume" min="0" max="100" step="1">
-        <span class="volume">{{ soundbridge.volume }}</span>
-      </label>
-      <button ng-click="soundbridge.pause()" class="btn btn-lg btn-success">
-        <span class="glyphicon glyphicon-play"></span><span class="glyphicon glyphicon-pause"></span>
-      </button>
-    </div>
-
-    <div class="current-song media" ng-switch="soundbridge.state.currentSong != null">
-      <div class="media-left">
-        <div class="media-object">
-          <span ng-switch-when="true">🎶 </span>
-          <span ng-switch-when="false">🔇 </span>
+      <div class="current-song media" ng-switch="soundbridge.state.currentSong != null">
+        <div class="media-left">
+          <div class="media-object">
+            <span ng-switch-when="true">🎶 </span>
+            <span ng-switch-when="false">🔇 </span>
+          </div>
+        </div>
+        <div ng-switch-when="true" class="media-body">
+          <h4 class="media-heading">
+            {{ soundbridge.state.currentSong.title }}
+          </h4>
+          <p>{{ soundbridge.state.currentSong.artist }}</p>
+        </div>
+        <div ng-switch-when="false" class="media-body">
+          <h4 class="media-heading">Not playing</h4>
         </div>
       </div>
-      <div ng-switch-when="true" class="media-body">
-        <h4 class="media-heading">
-          {{ soundbridge.state.currentSong.title }}
-        </h4>
-        <p>{{ soundbridge.state.currentSong.artist }}</p>
+    </section>
+    <footer>
+      <div id="controls">
+        <button class="power btn btn-default btn-lg"
+          ng-class="{
+            'btn-danger':  soundbridge.state.power === 'on',
+            'btn-success': soundbridge.state.power === 'off' }"
+          ng-click="soundbridge.togglePower()">
+          <span class="glyphicon glyphicon-off"></span>
+        </button>
+        <label class="volume-slider text-xl" ng-if="soundbridge.volume != null">
+          <span class="glyphicon hidden-xs" ng-class="{
+              'glyphicon-volume-up':   soundbridge.volume >= 50,
+              'glyphicon-volume-down': soundbridge.volume && soundbridge.volume < 50,
+              'glyphicon-volume-off':  soundbridge.volume === 0,
+            }"></span>
+          <input type="range" ng-model="soundbridge.volume" min="0" max="100" step="1">
+          <span class="volume">{{ soundbridge.volume }}</span>
+        </label>
+        <button ng-click="soundbridge.pause()" class="btn btn-lg btn-success">
+          <span class="glyphicon glyphicon-play"></span><span class="glyphicon glyphicon-pause"></span>
+        </button>
       </div>
-      <div ng-switch-when="false" class="media-body">
-        <h4 class="media-heading">Not playing</h4>
-      </div>
-    </div>
+    </footer>
   </body>
 </html>
