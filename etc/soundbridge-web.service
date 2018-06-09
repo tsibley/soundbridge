@@ -1,0 +1,14 @@
+[Unit]
+Description=Soundbridge web remote
+After=network.target
+
+[Service]
+WorkingDirectory=/home/tom/soundbridge
+ExecStart=/usr/bin/perl -Ilocal/lib/perl5/ local/bin/starman --listen :80 --workers 5 --user tom --group tom
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=10
+SyslogIdentifier=soundbridge-web
+
+[Install]
+WantedBy=default.target
