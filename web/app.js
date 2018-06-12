@@ -35,9 +35,9 @@
     $rootScope.soundbridge = Soundbridge;
 
     // Easier to register this global handler here and inject necessary
-    // components into it than to add directive boilerplate and add a phony
+    // components into it than to add directive boilerplate and a superfluous
     // tag/attribute to the HTML.
-    new SeeMeFeelMe($rootScope, Soundbridge);
+    new SeeMeFeelMe(document.querySelector("section"), $rootScope, Soundbridge);
   }
 
 })();

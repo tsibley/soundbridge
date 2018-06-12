@@ -8,15 +8,16 @@ class EventListener {
 }
 
 class TouchMeHealMe extends EventListener {
-  constructor() {
+  constructor(element = window) {
     super();
 
     this.touches = {};
+    this.element = element;
 
-    window.addEventListener("touchstart",  this, false);
-    window.addEventListener("touchmove",   this, false);
-    window.addEventListener("touchend",    this, false);
-    window.addEventListener("touchcancel", this, false);
+    this.element.addEventListener("touchstart",  this, false);
+    this.element.addEventListener("touchmove",   this, false);
+    this.element.addEventListener("touchend",    this, false);
+    this.element.addEventListener("touchcancel", this, false);
   }
 
   touchstart(e) {
@@ -61,8 +62,8 @@ class TouchMeHealMe extends EventListener {
 }
 
 class SeeMeFeelMe extends TouchMeHealMe {
-  constructor(scope, soundbridge) {
-    super();
+  constructor(element, scope, soundbridge) {
+    super(element);
 
     this.setVolume = v => {
       scope.$apply(() => {
@@ -83,9 +84,9 @@ class SeeMeFeelMe extends TouchMeHealMe {
         document.body.style.opacity = 1 - dy / 120;
     }
     else {
-      let viewportHeight = document.documentElement.clientHeight,
-          heightPercent  = (viewportHeight - end.clientY) / viewportHeight * 100,
-          newVolume      = Math.floor(Math.min(Math.max(0, heightPercent), 100)); // int between [0, 100]
+      let elementHeight = this.element.clientHeight,
+          heightPercent = (elementHeight - end.clientY) / elementHeight * 100,
+          newVolume     = Math.floor(Math.min(Math.max(0, heightPercent), 100)); // int between [0, 100]
 
       this.setVolume( newVolume );
     }
