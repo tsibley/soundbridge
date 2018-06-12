@@ -11,10 +11,10 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.17/angular-filter.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"></script>
     <script type="text/javascript" src="vendor/angular-debounce.min.js"></script>
+    <script type="text/javascript" src="touches.js"></script>
     <script type="text/javascript" src="app.js"></script>
     <script type="text/javascript" src="components.js"></script>
     <script type="text/javascript" src="Soundbridge.js"></script>
-    <script type="text/javascript" src="touches.js"></script>
 
 	  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <style type="text/css">
@@ -56,7 +56,7 @@
         float: left;
       }
 
-      .volume-slider {
+      .volume {
         display: inline-block;
         position: relative;
         top: 0.18em;
@@ -65,21 +65,14 @@
         white-space: nowrap;
       }
 
-      .volume-slider > .glyphicon {
+      .volume > .glyphicon {
         top: 4px;
       }
 
-      .volume-slider > .volume {
+      .volume > .level {
         display: inline-block;
         min-width: 3.5ex;
         text-align: right;
-      }
-
-      .volume-slider > input[type="range"] {
-        display: inline-block;
-        max-width: 6em;
-        min-width: 3em;
-        vertical-align: middle;
       }
 
       .current-song .media-object {
@@ -111,7 +104,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="white">
   </head>
   <body>
-    <section>
+    <section style="
+        background:
+          linear-gradient(to top, transparent {{ +soundbridge.volume }}%, white {{ +soundbridge.volume }}%),
+          linear-gradient(to top, #9198e5, #e66465 90%);">
       <div id="presets">
         <play-preset name="'Eclectic24'">Eclectic24</play-preset>
         <play-preset name="'Jazz 24'">Jazz 24</play-preset>
@@ -145,15 +141,14 @@
           ng-click="soundbridge.togglePower()">
           <span class="glyphicon glyphicon-off"></span>
         </button>
-        <label class="volume-slider text-xl" ng-if="soundbridge.volume != null">
-          <span class="glyphicon hidden-xs" ng-class="{
+        <div class="volume text-xl" ng-if="soundbridge.volume != null">
+          <span class="glyphicon" ng-class="{
               'glyphicon-volume-up':   soundbridge.volume >= 50,
               'glyphicon-volume-down': soundbridge.volume && soundbridge.volume < 50,
               'glyphicon-volume-off':  soundbridge.volume === 0,
             }"></span>
-          <input type="range" ng-model="soundbridge.volume" min="0" max="100" step="1">
-          <span class="volume">{{ soundbridge.volume }}</span>
-        </label>
+          <span class="level">{{ soundbridge.volume }}</span>
+        </div>
         <button ng-click="soundbridge.pause()" class="btn btn-lg btn-success">
           <span class="glyphicon glyphicon-play"></span><span class="glyphicon glyphicon-pause"></span>
         </button>

@@ -33,6 +33,11 @@
 
   function init(Soundbridge, $rootScope, $log) {
     $rootScope.soundbridge = Soundbridge;
+
+    // Easier to register this global handler here and inject necessary
+    // components into it than to add directive boilerplate and add a phony
+    // tag/attribute to the HTML.
+    new SeeMeFeelMe($rootScope, Soundbridge);
   }
 
 })();
