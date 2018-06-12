@@ -27,6 +27,13 @@
       body {
         display: flex;
         flex-direction: column;
+
+        /* Prevent body from scrolling/rubber-banding on iOS Safari */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        -webkit-overflow-scrolling: touch;
       }
 
       body > section {
