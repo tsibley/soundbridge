@@ -32,7 +32,7 @@ class TouchMeHealMe extends EventListener {
           end   = t;
 
       if (start)
-        this.pending(start, end);
+        this.pending(start, end, t);
     });
   }
 
@@ -59,6 +59,10 @@ class TouchMeHealMe extends EventListener {
       delete this.touches[t.identifier];
     });
   }
+
+  get firstTouch() {
+    return Object.values(this.touches)[0];
+  }
 }
 
 class SeeMeFeelMe extends TouchMeHealMe {
@@ -76,12 +80,14 @@ class SeeMeFeelMe extends TouchMeHealMe {
     return Object.keys(this.touches).length > 1;
   }
 
-  pending(start, end) {
+  pending(start, end, touch) {
     if (this.slidingToRefresh) {
-      let dy = end.clientY - start.clientY;
+      if (touch.identifier == this.firstTouch.identifier) {
+        let dy = end.clientY - start.clientY;
 
-      if (dy > 0)
-        document.body.style.opacity = 1 - dy / 120;
+        if (dy > 0)
+          document.body.style.opacity = 1 - dy / 120;
+      }
     }
     else {
       let elementHeight = this.element.clientHeight,
