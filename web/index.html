@@ -1,83 +1,165 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="Soundbridge">
   <head>
     <meta charset="UTF-8">
-    <title>Soundbridge Remote</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui" />
-    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <title>Soundbridge Remote</title>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.17/angular-filter.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"></script>
+    <script type="text/javascript" src="vendor/angular-debounce.min.js"></script>
+    <script type="text/javascript" src="touches.js"></script>
+    <script type="text/javascript" src="app.js"></script>
+    <script type="text/javascript" src="components.js"></script>
+    <script type="text/javascript" src="Soundbridge.js"></script>
 
 	  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-
     <style type="text/css">
-      body {
-        margin: 20px;
-      }
-      #presets {
-        position: relative;
-        text-align: right;
-      }
-      #presets button {
-        margin: 5px 0;
-        float: right;
-        clear: right;
+      html, body {
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
       }
 
-      #controls {
-        position: absolute;
-        bottom: 0;
+      body {
+        display: flex;
+        flex-direction: column;
+
+        /* Prevent body from scrolling/rubber-banding on iOS Safari */
+        position: fixed;
+        top: 0;
         left: 0;
-        right: 0;
+        width: 100%;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      body > section {
+        flex: auto;
+        padding: 20px;
+      }
+
+      body > footer {
         padding: 10px 20px;
         background: #eee;
         border-top: 1px solid #ccc;
+      }
 
+      .text-lg {
+        font-size: 18px;
+      }
+
+      .text-xl {
+        font-size: 22px;
+      }
+
+      #controls {
         text-align: right;
       }
 
       #controls button.power {
         float: left;
       }
+
+      .volume {
+        display: inline-block;
+        position: relative;
+        top: 0.18em;
+        margin: 0 0.5em;
+        padding: 0;
+        white-space: nowrap;
+      }
+
+      .volume > .glyphicon {
+        top: 4px;
+      }
+
+      .volume > .level {
+        display: inline-block;
+        min-width: 3.5ex;
+        text-align: right;
+      }
+
+      .current-song .media-object {
+        position: relative;
+        top: -4px;
+        font-size: 22px;
+      }
     </style>
+
+    <!-- From https://www.favicon-generator.org -->
+    <link rel="apple-touch-icon" sizes="57x57" href="/icons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/icons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/icons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/icons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/icons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/icons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/icons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/icons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/icons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+    <link rel="manifest" href="/icons/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/icons/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
   </head>
   <body>
-    <form id="form-preset-eclectic24" method="POST" action="/play/preset/Eclectic24"></form>
-    <form id="form-preset-jazz24"     method="POST" action="/play/preset/Jazz+24"></form>
-    <form id="form-play-remote"       method="POST" action="/play/remote"></form>
-    <form id="form-playpause"         method="POST" action="/playpause"></form>
-    <form id="form-volume-up"         method="POST" action="/ir/volume/up"></form>
-    <form id="form-volume-down"       method="POST" action="/ir/volume/down"></form>
-    <form id="form-power"             method="POST" action="/ir/power"></form>
+    <section style="
+        background:
+          linear-gradient(to top, transparent {{ +soundbridge.volume }}%, white {{ +soundbridge.volume }}%),
+          linear-gradient(to top, #9198e5, #e66465 90%);">
+      <div id="presets">
+        <play-preset name="'Eclectic24'">Eclectic24</play-preset>
+        <play-preset name="'Jazz 24'">Jazz 24</play-preset>
+        <play-preset name="'88.5 XPN'">88.5 XPN</play-preset>
+      </div>
 
-    <div id="presets">
-      <button form="form-preset-eclectic24" type="submit" class="btn btn-default btn-primary">
-        <span class="glyphicon glyphicon-play"></span>
-        Eclectic24
-      </button>
-
-      <button form="form-preset-jazz24" type="submit" class="btn btn-default btn-primary">
-        <span class="glyphicon glyphicon-play"></span>
-        Jazz 24
-      </button>
-
-      <button form="form-play-remote" type="submit" class="btn btn-default btn-primary">
-        <span class="glyphicon glyphicon-play"></span>
-        Remote from plink
-      </button>
-    </div>
-
-    <div id="controls">
-      <button form="form-power" type="submit" class="btn btn-default btn-lg power btn-danger">
-        <span class="glyphicon glyphicon-off"></span>
-      </button>
-      <button form="form-volume-down" type="submit" class="btn btn-default btn-lg btn-info">
-        🔉
-      </button>
-      <button form="form-volume-up" type="submit" class="btn btn-default btn-lg btn-info">
-        🔊 
-      </button>
-      <button form="form-playpause" type="submit" class="btn btn-default btn-lg btn-success">
-        <span class="glyphicon glyphicon-play"></span><span class="glyphicon glyphicon-pause"></span>
-      </button>
-    </div>
-  <body>
+      <div class="current-song media" ng-switch="soundbridge.state.currentSong != null">
+        <div class="media-left">
+          <div class="media-object">
+            <span ng-switch-when="true">🎶 </span>
+            <span ng-switch-when="false">🔇 </span>
+          </div>
+        </div>
+        <div ng-switch-when="true" class="media-body">
+          <h4 class="media-heading">
+            {{ soundbridge.state.currentSong.title }}
+          </h4>
+          <p>{{ soundbridge.state.currentSong.artist }}</p>
+        </div>
+        <div ng-switch-when="false" class="media-body">
+          <h4 class="media-heading">Not playing</h4>
+        </div>
+      </div>
+    </section>
+    <footer>
+      <div id="controls">
+        <button class="power btn btn-default btn-lg"
+          ng-class="{
+            'btn-danger':  soundbridge.state.power === 'on',
+            'btn-success': soundbridge.state.power === 'off' }"
+          ng-click="soundbridge.togglePower()">
+          <span class="glyphicon glyphicon-off"></span>
+        </button>
+        <div class="volume text-xl" ng-if="soundbridge.volume != null">
+          <span class="glyphicon" ng-class="{
+              'glyphicon-volume-up':   soundbridge.volume >= 50,
+              'glyphicon-volume-down': soundbridge.volume && soundbridge.volume < 50,
+              'glyphicon-volume-off':  soundbridge.volume === 0,
+            }"></span>
+          <span class="level">{{ soundbridge.volume }}</span>
+        </div>
+        <button ng-click="soundbridge.pause()" class="btn btn-lg btn-success">
+          <span class="glyphicon glyphicon-play"></span><span class="glyphicon glyphicon-pause"></span>
+        </button>
+      </div>
+    </footer>
+  </body>
 </html>
