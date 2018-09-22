@@ -43,6 +43,14 @@ sub current_song {
 
     return undef unless $title or $artist;
 
+    # Some stations (WXPN 🤔 ) stuff both into title and put other structured
+    # info into "artist".
+    ($title, $artist) = split /\s+ - \s+/x, $title, 2
+        if $artist =~ /=/;
+
+    $title  =~ s/^\s+|\s+$//g;
+    $artist =~ s/^\s+|\s+$//g;
+
     return {
         title  => $title,
         artist => $artist,
