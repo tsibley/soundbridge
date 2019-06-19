@@ -15,6 +15,7 @@ requires 'Net::UPnP::ControlPoint';
 requires 'open';
 requires 'Plack::App::File';
 requires 'Plack::Middleware::AddDefaultCharset';
+requires 'Starman';
 requires 'Time::HiRes';
 requires 'Types::Path::Tiny';
 requires 'Types::Standard';
