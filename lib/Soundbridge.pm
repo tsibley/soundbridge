@@ -14,7 +14,7 @@ use namespace::clean;
 has server => (
     is      => 'rw',
     isa     => Str,
-    default => sub { 'soundbridge.local:5555' },
+    default => sub { 'soundbridge:5555' },
 );
 
 has socket => (
