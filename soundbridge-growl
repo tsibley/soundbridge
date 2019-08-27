@@ -5,7 +5,9 @@ use warnings;
 use IO::Socket::INET;
 use constant ICON => "$ENV{HOME}/projects/soundbridge/assets/M1001icon.png";
 
-my $sock = IO::Socket::INET->new('soundbridge.local:5555')
+use Soundbridge qw(hostname); 
+
+my $sock = IO::Socket::INET->new(Soundbridge::hostname())
     or die "Unable to bind to soundbridge: $!";
 
 die "Huh?" unless $sock->getline =~ /roku: ready/;

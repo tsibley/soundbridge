@@ -11,10 +11,15 @@ use Carp qw(croak);
 use Time::HiRes qw(alarm);
 use namespace::clean;
 
+
+sub hostname {
+    return $ENV{'SOUNDBRIDGE'} || "soundbridge.local:5555";
+}
+
 has server => (
     is      => 'rw',
     isa     => Str,
-    default => sub { 'soundbridge.local:5555' },
+    default => sub { hostname() },
 );
 
 has socket => (
