@@ -126,6 +126,13 @@ sub rcp {
             elsif (/\S/) {
                 push @result, $_;
             }
+            elsif (/^\s*$/) {
+                # Presets can be sparsely populated and we need to preserve
+                # the original indexing, so don't skip blank/empty lines.
+                if ($cmd eq "ListPresets")  {
+                    push @result, $_;
+                }
+            }
         } continue {
             alarm $self->timeout;
         }

@@ -115,10 +115,12 @@
         background:
           linear-gradient(to top, transparent {{ +soundbridge.volume }}%, white {{ +soundbridge.volume }}%),
           linear-gradient(to top, #9198e5, #e66465 90%);">
+
       <div id="presets">
-        <play-preset name="'Eclectic24'">Eclectic24</play-preset>
-        <play-preset name="'Jazz 24'">Jazz 24</play-preset>
-        <play-preset name="'88.5 XPN'">88.5 XPN</play-preset>
+        <play-preset
+          ng-repeat="preset in soundbridge.presets"
+          preset="preset">
+        </play-preset>
       </div>
 
       <div class="current-song media" ng-switch="soundbridge.state.currentSong != null">

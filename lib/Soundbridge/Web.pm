@@ -43,6 +43,7 @@ sub dispatch_request {
     'GET  + /state'         => 'state',
     'GET  + /current-song'  => 'current_song',
 
+    'GET  + /presets'       => 'list_presets',
     'POST + /play/preset/*' => 'play_preset',
     'POST + /pause'         => 'pause',
 
@@ -90,6 +91,10 @@ sub current_song ($self, @) {
     Json $self->sb->current_song;
 }
 
+sub list_presets($self, @) {
+    Json [ $self->sb->list_presets ];
+}
+
 sub get_volume ($self, @) {
     Ok $self->sb->volume;
 }
@@ -98,12 +103,8 @@ sub set_volume ($self, $to, @) {
     Ok $self->sb->volume($to);
 }
 
-sub play_preset ($self, $name, @) {
-    my $preset = $self->sb->find_preset($name)
-        or die "Couldn't find preset «$name»\n";
-
-    $self->sb->play_preset( $preset->{index} );
-
+sub play_preset ($self, $index, @) {
+    $self->sb->play_preset($index);
     return NoContent;
 }
 

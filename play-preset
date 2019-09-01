@@ -13,7 +13,6 @@ if (my $play = join ' ', @ARGV) {
     say "Playing $preset->{name}... ";
     $sb->play_preset( $preset->{index} );
 } else {
-    my $i = 1;
-    printf "%2d. %s\n", $i++, $_
-        for $sb->rcp('ListPresets');
+    printf "%2d. %s\n", $_->{index} + 1, $_->{name}
+        for $sb->list_presets;
 }

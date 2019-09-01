@@ -14,6 +14,7 @@
 
       $log.debug("Soundbridge — Let the music play!");
       this.sync();
+      this.fetchPresets();
 
       return Soundbridge.$instance = this;
     }
@@ -74,6 +75,15 @@
         .then( this.updateStateFromResponse() );
     }
 
+    fetchPresets() {
+      this.$log.debug("Fetching presets");
+
+      return this.$http.get("/presets").then(
+        response => this.presets = response.data,
+        error => { this.$log.error("Failed to fetch presets:", error) }
+      );
+    }
+
     // This getter/setter combo is a little wonky still with fetchState, but
     // I'll fix it later.
     get volume() {
@@ -117,9 +127,9 @@
         .finally( () => this.sync() );
     }
 
-    playPreset(name) {
-      this.$log.debug("Playing preset " + name);
-      return this.$http.post("/play/preset/" + window.encodeURIComponent(name))
+    playPreset(index) {
+      this.$log.debug("Playing preset " + index);
+      return this.$http.post("/play/preset/" + window.encodeURIComponent(index))
         .finally( () => this.sync() );
     }
 

@@ -1,4 +1,4 @@
-<button class="btn btn-default btn-primary" ng-click="soundbridge.playPreset($ctrl.name)">
+<button class="btn btn-default btn-primary" ng-click="soundbridge.playPreset($ctrl.preset.index)">
   <span class="glyphicon glyphicon-play"></span>
-  <ng-transclude></ng-transclude>
+  {{$ctrl.preset.name}}
 </button>

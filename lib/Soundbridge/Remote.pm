@@ -7,7 +7,6 @@ use Moo;
 extends 'Soundbridge';
 
 use List::Util qw< first >;
-use List::MoreUtils qw< firstidx >;
 use namespace::clean;
 
 
@@ -59,7 +58,10 @@ sub current_song {
 
 sub list_presets {
     my ($self) = @_;
-    return $self->rcp('ListPresets');
+    my $index = 0;
+    return grep { length $_->{name} }
+            map { +{ name => $_, index => $index++ } }
+                $self->rcp('ListPresets');
 }
 
 sub pause {
@@ -73,18 +75,12 @@ sub play_preset {
 }
 
 sub find_preset {
-    my ($self, $preset) = @_;
-
-    my @presets = $self->list_presets;
-    my $index   = $preset =~ /\D/
-        ? firstidx { /\Q$preset\E/i } @presets
-        : $preset - 1;
-
-    return unless $index >= 0 and $presets[$index];
-    return {
-        index => $index,
-        name  => $presets[$index],
-    };
+    my ($self, $query) = @_;
+    return first {
+        $query =~ /\D/
+            ? $_->{name} =~ /\Q$query\E/i
+            : $_->{index} == $query - 1
+    } $self->list_presets;
 }
 
 sub volume {

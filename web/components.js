@@ -7,9 +7,8 @@
     .component('playPreset', {
       controller: componentController,
       templateUrl: 'partial/play-preset.html',
-      transclude: true,
       bindings: {
-        name: '<'
+        preset: '<'
       }
     });
 
