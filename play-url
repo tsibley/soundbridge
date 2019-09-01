@@ -4,7 +4,7 @@ use warnings;
 
 use Soundbridge;
 
-my $sb  = Soundbridge->new;
+my $sb  = Soundbridge->new();
 my $url = shift @ARGV
     or die "usage: $0 url\n";
 
