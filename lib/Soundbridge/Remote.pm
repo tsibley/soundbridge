@@ -58,8 +58,26 @@ sub current_song {
 }
 
 sub list_presets {
+
+    
+    
     my ($self) = @_;
-    return $self->rcp('ListPresets');
+    my @result =  $self->rcp('ListPresets');
+
+    # It would be ideal if the javascript can look up by id or index
+    # rather than name so create a datastructure that has an index
+    
+    my @results;
+    my $index = 0;
+
+    foreach (@result) {
+        push @results, {
+                         name  => $_,
+                         id => $index,
+                        };
+        $index = $index + 1 ;
+    } 
+    return \@results;
 }
 
 sub pause {

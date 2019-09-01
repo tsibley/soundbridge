@@ -11,9 +11,24 @@
       this.$interval = $interval;
       this.$debounce = debounce;
       this.$log      = $log;
+      
+      this.presets = [];
 
       $log.debug("Soundbridge — Let the music play!");
       this.sync();
+
+      var fetchPresets = function() {
+        console.log("fetchPresets()");
+        return $http.get('/presets').then(function(response) {
+            Soundbridge.$instance.presets = response.data;
+            console.log("fetchPresets: captured data response from server: ");
+            console.log(response.data);
+          }, function(errResponse) {
+            console.error('Error while fetching notes');
+          });
+      };
+
+      fetchPresets();
 
       return Soundbridge.$instance = this;
     }
