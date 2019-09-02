@@ -18,13 +18,10 @@
       this.sync();
 
       var fetchPresets = function() {
-        console.log("fetchPresets()");
         return $http.get('/presets').then(function(response) {
             Soundbridge.$instance.presets = response.data;
-            console.log("fetchPresets: captured data response from server: ");
-            console.log(response.data);
           }, function(errResponse) {
-            console.error('Error while fetching notes');
+            console.error('Error fetching presets data.');
           });
       };
 
