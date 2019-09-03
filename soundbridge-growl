@@ -3,9 +3,11 @@ use strict;
 use warnings;
 
 use IO::Socket::INET;
-use constant ICON => "$ENV{HOME}/projects/soundbridge/assets/M1001icon.png";
 
-use Soundbridge qw(hostname); 
+use FindBin qw< $Bin >;
+use constant ICON => File::Spec->catfile($Bin, 'assets', 'M1001icon.png');
+
+use Soundbridge qw(hostname);
 
 my $sock = IO::Socket::INET->new(Soundbridge::hostname())
     or die "Unable to bind to soundbridge: $!";
