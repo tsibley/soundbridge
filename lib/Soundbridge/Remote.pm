@@ -65,10 +65,12 @@ sub list_presets {
     my $index = 0;
 
     foreach (@result) {
-        push @results, {
-                         name  => $_,
-                         id => $index,
-                        };
+        if ($_ ne "") {
+            push @results, {
+                            name  => $_,
+                            id => $index
+                           };
+        }
         $index = $index + 1 ;
     } 
     return \@results;
@@ -83,6 +85,25 @@ sub play_preset {
     my ($self, $index) = @_;
     $self->rcp("PlayPreset $index");
 }
+
+sub preset_name {
+    my ($self, $index) = @_;
+    my $presets_ref = $self->list_presets();
+    my @items = @$presets_ref;
+
+    my $result; 
+    foreach (@items) {
+        my $href =  $_;
+
+        my $key;
+        foreach $key (keys %$href) {
+            if ( $href->{id} == $index ){
+                $result = $href->{name};
+            }
+        } 
+    }
+    return $result;
+} 
 
 sub find_preset {
     my ($self, $preset) = @_;
