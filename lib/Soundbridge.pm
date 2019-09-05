@@ -128,6 +128,11 @@ sub rcp {
             elsif (/\S/) {
                 push @result, $_;
             }
+            elsif (/^\s*$/) {
+                if ($cmd =~ /ListPresets/)  {
+                    push @result, $_;
+                }; 
+            }
         } continue {
             alarm $self->timeout;
         }
