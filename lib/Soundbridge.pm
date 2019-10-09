@@ -12,14 +12,12 @@ use Time::HiRes qw(alarm);
 use namespace::clean;
 
 
-sub hostname {
-    return $ENV{'SOUNDBRIDGE'} || "soundbridge.local:5555";
-}
+our $DEFAULT_SERVER = sprintf "%s:5555", $ENV{'SOUNDBRIDGE'} || "soundbridge.local";
 
 has server => (
     is      => 'rw',
     isa     => Str,
-    default => sub { hostname() },
+    default => sub { $DEFAULT_SERVER },
 );
 
 has socket => (

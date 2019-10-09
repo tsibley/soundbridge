@@ -2,14 +2,13 @@
 use strict;
 use warnings;
 
+use Soundbridge;
 use IO::Socket::INET;
 
 use FindBin qw< $Bin >;
 use constant ICON => File::Spec->catfile($Bin, 'assets', 'M1001icon.png');
 
-use Soundbridge qw(hostname);
-
-my $sock = IO::Socket::INET->new(Soundbridge::hostname())
+my $sock = IO::Socket::INET->new($Soundbridge::DEFAULT_SERVER)
     or die "Unable to bind to soundbridge: $!";
 
 die "Huh?" unless $sock->getline =~ /roku: ready/;
