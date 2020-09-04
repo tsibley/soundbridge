@@ -40,27 +40,29 @@ sub alias     ($path) { sub { redispatch_to $path } }
 sub dispatch_request {
     '' => 'default_charset',
 
-    'GET  + /state'         => 'state',
-    'GET  + /current-song'  => 'current_song',
+    '/soundbridge/...' => sub {
+        'GET  + /state'         => 'state',
+        'GET  + /current-song'  => 'current_song',
 
-    'GET  + /presets'       => 'list_presets',
-    'POST + /play/preset/*' => 'play_preset',
-    'POST + /pause'         => 'pause',
+        'GET  + /presets'       => 'list_presets',
+        'POST + /play/preset/*' => 'play_preset',
+        'POST + /pause'         => 'pause',
 
-    'GET  + /volume'        => 'get_volume',
-    'POST + /volume/*'      => 'set_volume',
+        'GET  + /volume'        => 'get_volume',
+        'POST + /volume/*'      => 'set_volume',
 
-    'GET  + /power'         => 'get_power',
-    'POST + /power'         => alias('/ir/power'),
-    'POST + /reboot'        => 'reboot',
+        'GET  + /power'         => 'get_power',
+        'POST + /power'         => alias('/ir/power'),
+        'POST + /reboot'        => 'reboot',
 
-    # I didn't debug why, but this line must be after the POST + /power line
-    # above or the redispatch won't work (404 will be returned).
-    #   -trs, 19 Jan 2018
-    'POST + /ir/**'         => 'ir_command',
+        # I didn't debug why, but this line must be after the POST + /power line
+        # above or the redispatch won't work (404 will be returned).
+        #   -trs, 19 Jan 2018
+        'POST + /ir/**'         => 'ir_command',
+    },
 
-	'GET + /'               => alias('/index.html'),
-	'GET + /...'            => 'serve_static',
+    'GET + /'    => alias('/index.html'),
+    'GET + /...' => 'serve_static',
 }
 
 sub default_charset ($self, @) {

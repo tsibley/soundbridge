@@ -71,14 +71,14 @@
     fetchState() {
       this.$log.debug("Fetching state");
 
-      return this.$http.get("/state")
+      return this.$http.get("/soundbridge/state")
         .then( this.updateStateFromResponse() );
     }
 
     fetchPresets() {
       this.$log.debug("Fetching presets");
 
-      return this.$http.get("/presets").then(
+      return this.$http.get("/soundbridge/presets").then(
         response => this.presets = response.data,
         error => { this.$log.error("Failed to fetch presets:", error) }
       );
@@ -117,25 +117,25 @@
     setVolume(vol) {
       this.$log.debug("Setting volume");
 
-      return this.$http.post("/volume/" + window.encodeURIComponent(vol))
+      return this.$http.post("/soundbridge/volume/" + window.encodeURIComponent(vol))
         .then( this.updateStateFromResponse("volume", Number) );
     }
 
     togglePower() {
       this.$log.debug("⚡ Power!");
-      return this.$http.post("/ir/power")
+      return this.$http.post("/soundbridge/power")
         .finally( () => this.sync() );
     }
 
     playPreset(index) {
       this.$log.debug("Playing preset " + index);
-      return this.$http.post("/play/preset/" + window.encodeURIComponent(index))
+      return this.$http.post("/soundbridge/play/preset/" + window.encodeURIComponent(index))
         .finally( () => this.sync() );
     }
 
     pause() {
       this.$log.debug("Pause");
-      return this.$http.post("/pause");
+      return this.$http.post("/soundbridge/pause");
     }
   }
 
