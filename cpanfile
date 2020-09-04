@@ -4,6 +4,7 @@ requires 'Data::Dumper';
 requires 'experimental';
 requires 'feature';
 requires 'HTML::Entities';
+requires 'IPC::Run';
 requires 'IO::Socket::INET';
 requires 'List::MoreUtils';
 requires 'List::Util';

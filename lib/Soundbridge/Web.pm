@@ -8,6 +8,7 @@ package Soundbridge::Web;
 use Web::Simple;
 
 use Encode qw< encode_utf8 >;
+use IPC::Run qw<>;
 use JSON::MaybeXS qw<>;
 use Path::Tiny;
 use Plack::App::File;
@@ -25,6 +26,12 @@ has sb => (
     builder => sub { Soundbridge::Remote->new( timeout => 0.2 ) },
 );
 
+has lirc_remote => (
+    is      => 'ro',
+    isa     => Str,
+    default => 'Sony-RMT-AA400U',
+);
+
 has docroot => (
     is      => 'ro',
     isa     => Dir,
@@ -35,6 +42,7 @@ has docroot => (
 sub Ok        ($text) { [ 200, ["Content-Type" => "text/plain"],       [encode_utf8($text)] ] }
 sub Json      ($data) { [ 200, ["Content-Type" => "application/json"], [encode_json($data)] ] }
 sub NoContent ()      { [ 204, [], [] ] }
+sub BadRequest($text) { [ 400, ["Content-Type" => "text/plain"],       [encode_utf8($text)] ] }
 sub alias     ($path) { sub { redispatch_to $path } }
 
 sub dispatch_request {
@@ -59,6 +67,21 @@ sub dispatch_request {
         # above or the redispatch won't work (404 will be returned).
         #   -trs, 19 Jan 2018
         'POST + /ir/**'         => 'ir_command',
+    },
+
+    '/receiver/...' => sub {
+        'POST + /power'             => ir_send('power-toggle'),
+
+        'POST + /volume/up'         => ir_send('volume-up'),
+        'POST + /volume/down'       => ir_send('volume-down'),
+
+        'POST + /input/1'           => ir_send('input-1'),
+        'POST + /input/2'           => ir_send('input-2'),
+        'POST + /input/3'           => ir_send('input-3'),
+        'POST + /input/4'           => ir_send('input-4'),
+        'POST + /input/fm'          => ir_send('input-fm'),
+        'POST + /input/phono'       => ir_send('input-phono'),
+        'POST + /input/bluetooth'   => ir_send('input-bluetooth'),
     },
 
     'GET + /'    => alias('/index.html'),
@@ -129,9 +152,25 @@ sub reboot ($self, @) {
     return NoContent;
 }
 
+sub ir_send ($key) {
+    sub ($self, @) {
+        return BadRequest("invalid key «$key»")
+            if $key =~ /[^a-zA-Z0-9_-]/;
+
+        run_command("irsend", "send_once", $self->lirc_remote, $key);
+        return NoContent;
+    }
+}
+
 sub encode_json ($data) {
     state $json = JSON::MaybeXS->new->utf8->allow_nonref;
     return $json->encode($data);
+}
+
+sub run_command (@cmd) {
+    my $output;
+    IPC::Run::run(\@cmd, "<", \undef, ">&", \$output)
+        or die "$cmd[0] failed\nexited @{[$? >> 8]}\noutput:\n\n$output\n";
 }
 
 __PACKAGE__->run_if_script;
