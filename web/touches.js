@@ -32,7 +32,7 @@ class TouchMeHealMe extends EventListener {
           end   = t;
 
       if (start)
-        this.pending(start, end, t);
+        this.pending(start, end);
     });
   }
 
@@ -80,9 +80,9 @@ class SeeMeFeelMe extends TouchMeHealMe {
     return Object.keys(this.touches).length > 1;
   }
 
-  pending(start, end, touch) {
+  pending(start, end) {
     if (this.slidingToRefresh) {
-      if (touch.identifier == this.firstTouch.identifier) {
+      if (end.identifier === this.firstTouch.identifier) {
         let dy = end.clientY - start.clientY;
 
         if (dy > 0)
