@@ -140,7 +140,7 @@
   }
 
   angular
-    .module('Soundbridge')
+    .module('HiFi')
     .service('Soundbridge', ['$http', '$interval', 'debounce', '$log', Soundbridge]);
 
 })();
