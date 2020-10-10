@@ -66,14 +66,9 @@ class TouchMeHealMe extends EventListener {
 }
 
 class SeeMeFeelMe extends TouchMeHealMe {
-  constructor(element, scope, soundbridge) {
+  constructor(element, setVolume = () => {}) {
     super(element);
-
-    this.setVolume = v => {
-      scope.$apply(() => {
-        soundbridge.volume = v;
-      });
-    };
+    this.setVolume = setVolume;
   }
 
   get slidingToRefresh() {

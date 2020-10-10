@@ -37,7 +37,12 @@
     // Easier to register this global handler here and inject necessary
     // components into it than to add directive boilerplate and a superfluous
     // tag/attribute to the HTML.
-    new SeeMeFeelMe(document.querySelector("section"), $rootScope, Soundbridge);
+    new SeeMeFeelMe(
+      document.querySelector("section"),
+      vol => $rootScope.$apply(() => {
+        Soundbridge.volume = vol;
+      })
+    );
   }
 
 })();
