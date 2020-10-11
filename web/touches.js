@@ -75,12 +75,18 @@ class SeeMeFeelMe extends TouchMeHealMe {
   }
 
   get slidingToRefresh() {
+    // Two (or more) fingers (checked here), sliding down (checked in pending())
     return Object.keys(this.touches).length > 1;
   }
 
   pending(start, prev, end, state) {
     if (this.slidingToRefresh) {
+      // Only use one touch (first contact) out of the multi-touch gesture,
+      // otherwise each touch will drive conflicting changes in opacity.
       if (end.identifier === this.firstTouch.identifier) {
+        // Change in vertical movement since the *start of this touch gesture*.
+        // Positive is moving downwards, negative upwards, because we expect
+        // this to be a "pull down" gesture.
         let dy = end.clientY - start.clientY;
 
         if (dy > 0)
