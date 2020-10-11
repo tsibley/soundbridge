@@ -22,18 +22,21 @@ class TouchMeHealMe extends EventListener {
 
   touchstart(e) {
     Array.from(e.changedTouches).forEach(t => {
-      this.touches[t.identifier] = {start: t, prev: t};
+      this.touches[t.identifier] = {start: t, prev: t, state: {}};
     });
   }
 
   touchmove(e) {
     Array.from(e.changedTouches).forEach(t => {
-      let start = this.touches[t.identifier].start,
+      let state = this.touches[t.identifier].state,
+          start = this.touches[t.identifier].start,
           prev  = this.touches[t.identifier].prev,
           end   = t;
 
-      if (start)
-        this.pending(start, prev, end);
+      if (start) {
+        this.touches[t.identifier].state =
+          this.pending(start, prev, end, state);
+      }
 
       this.touches[t.identifier].prev = t;
     });
@@ -41,11 +44,12 @@ class TouchMeHealMe extends EventListener {
 
   touchend(e) {
     Array.from(e.changedTouches).forEach(t => {
-      let start = this.touches[t.identifier].start,
+      let state = this.touches[t.identifier].state,
+          start = this.touches[t.identifier].start,
           end   = t;
 
       if (start)
-        this.commit(start, end);
+        this.commit(start, end, state);
 
       delete this.touches[t.identifier];
     });
@@ -53,11 +57,12 @@ class TouchMeHealMe extends EventListener {
 
   touchcancel(e) {
     Array.from(e.changedTouches).forEach(t => {
-      let start = this.touches[t.identifier].start,
+      let state = this.touches[t.identifier].state,
+          start = this.touches[t.identifier].start,
           end   = t;
 
       if (start)
-        this.cancel(start, end);
+        this.cancel(start, end, state);
 
       delete this.touches[t.identifier];
     });
@@ -69,9 +74,9 @@ class TouchMeHealMe extends EventListener {
 }
 
 class SeeMeFeelMe extends TouchMeHealMe {
-  constructor(element, setVolume = () => {}) {
+  constructor(element, adjustVolume = (by) => {}) {
     super(element);
-    this.setVolume = setVolume;
+    this.adjustVolume = adjustVolume;
   }
 
   get slidingToRefresh() {
@@ -94,11 +99,36 @@ class SeeMeFeelMe extends TouchMeHealMe {
       }
     }
     else {
-      let elementHeight = this.element.clientHeight,
-          heightPercent = (elementHeight - end.clientY) / elementHeight * 100,
-          newVolume     = Math.floor(Math.min(Math.max(0, heightPercent), 100)); // int between [0, 100]
+      // Change in vertical movement since the *start of this touch gesture*.
+      // Positive is moving upwards, negative downwards, because increasing
+      // volume is upwards.  Used for UI feedback.
+      const dy = start.clientY - end.clientY;
 
-      this.setVolume( newVolume );
+      // Change in vertical movement since the *last event in this gesture*,
+      // i.e. call to this method.  Positive is moving upwards, negative
+      // downwards.
+      const ddy = prev.clientY - end.clientY;
+
+      // Calculate volume steps from accumulated ddy.
+      const accumulated = ddy + (state.remainder || 0);
+
+      const stepBy = 20;
+      const steps  = Math.floor(accumulated / stepBy);
+
+      // Send adjustments
+      const newState = {
+        dy,
+        ddy,
+        steps,
+        remainder: steps ? accumulated % steps : accumulated,
+      };
+
+      console.debug("Volume slider state: ", newState);
+
+      this.adjustSlider(dy);
+      this.adjustVolume(steps);
+
+      return newState;
     }
   }
 
@@ -108,11 +138,36 @@ class SeeMeFeelMe extends TouchMeHealMe {
         window.location.reload(true);
       else
         this.cancel();
+    } else {
+      this.adjustSlider(null);
     }
   }
 
   cancel() {
     if (this.slidingToRefresh)
       document.body.style.removeProperty("opacity");
+    else
+      this.adjustSlider(null);
+  }
+
+  adjustSlider(dy) {
+    if (dy != null) {
+      const elementHeight = this.element.clientHeight,
+            heightPercent = dy / elementHeight * 100,
+            adjustment    = Math.floor(Math.max(-100, Math.min(100, heightPercent))); // int between [-100, 100]
+
+      this.element.style.background = `
+        linear-gradient(
+          to ${adjustment > 0 ? "top" : "bottom"},
+          white       50%,
+          transparent 50%,
+          transparent ${50 + Math.abs(adjustment)}%,
+          white       ${50 + Math.abs(adjustment)}%
+        ),
+        linear-gradient(to top, #9198e5, #e66465 90%)
+      `;
+    } else {
+      this.element.style.removeProperty("background");
+    }
   }
 }
