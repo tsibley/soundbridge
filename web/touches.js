@@ -22,23 +22,26 @@ class TouchMeHealMe extends EventListener {
 
   touchstart(e) {
     Array.from(e.changedTouches).forEach(t => {
-      this.touches[t.identifier] = t;
+      this.touches[t.identifier] = {start: t, prev: t};
     });
   }
 
   touchmove(e) {
     Array.from(e.changedTouches).forEach(t => {
-      let start = this.touches[t.identifier],
+      let start = this.touches[t.identifier].start,
+          prev  = this.touches[t.identifier].prev,
           end   = t;
 
       if (start)
-        this.pending(start, end);
+        this.pending(start, prev, end);
+
+      this.touches[t.identifier].prev = t;
     });
   }
 
   touchend(e) {
     Array.from(e.changedTouches).forEach(t => {
-      let start = this.touches[t.identifier],
+      let start = this.touches[t.identifier].start,
           end   = t;
 
       if (start)
@@ -50,7 +53,7 @@ class TouchMeHealMe extends EventListener {
 
   touchcancel(e) {
     Array.from(e.changedTouches).forEach(t => {
-      let start = this.touches[t.identifier],
+      let start = this.touches[t.identifier].start,
           end   = t;
 
       if (start)
@@ -61,7 +64,7 @@ class TouchMeHealMe extends EventListener {
   }
 
   get firstTouch() {
-    return Object.values(this.touches)[0];
+    return Object.values(this.touches)[0].start;
   }
 }
 
@@ -75,7 +78,7 @@ class SeeMeFeelMe extends TouchMeHealMe {
     return Object.keys(this.touches).length > 1;
   }
 
-  pending(start, end) {
+  pending(start, prev, end, state) {
     if (this.slidingToRefresh) {
       if (end.identifier === this.firstTouch.identifier) {
         let dy = end.clientY - start.clientY;
