@@ -53,6 +53,27 @@
         error => { this.$log.error("Failed to switch inputs:", error) }
       );
     }
+
+    togglePower() {
+      this.$log.debug("⚡ Power!");
+      return this.$http.post("/receiver/power").catch(
+        error => { this.$log.error("Failed to toggle power:", error) }
+      );
+    }
+
+    powerOn() {
+      this.$log.debug("⚡ Power on!");
+      return this.$http.post("/receiver/power/on").catch(
+        error => { this.$log.error("Failed to power on:", error) }
+      );
+    }
+
+    powerOff() {
+      this.$log.debug("💤 Power off");
+      return this.$http.post("/receiver/power/off").catch(
+        error => { this.$log.error("Failed to power off:", error) }
+      );
+    }
   }
 
   angular

@@ -73,6 +73,8 @@ sub dispatch_request {
 
     '/receiver/...' => sub {
         'POST + /power'             => ir_send('power-toggle'),
+        'POST + /power/on'          => ir_send('power-on'),
+        'POST + /power/off'         => ir_send('power-off'),
 
         'POST + /volume/up'         => ir_send('volume-up'),
         'POST + /volume/down'       => ir_send('volume-down'),
