@@ -43,6 +43,16 @@
         error => { this.$log.error("Failed to turn down the volume:", error) }
       );
     }
+
+    input(source) {
+      source = String(source).toLowerCase();
+
+      this.$log.debug(`Switching to input ${source}`);
+
+      return this.$http.post(`/receiver/input/${source}`).catch(
+        error => { this.$log.error("Failed to switch inputs:", error) }
+      );
+    }
   }
 
   angular
