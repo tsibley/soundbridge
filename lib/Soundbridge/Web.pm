@@ -61,6 +61,8 @@ sub dispatch_request {
 
         'GET  + /power'         => 'get_power',
         'POST + /power'         => alias('/ir/power'),
+        'POST + /power/on'      => 'power_on',
+        'POST + /power/off'     => 'power_off',
         'POST + /reboot'        => 'reboot',
 
         # I didn't debug why, but this line must be after the POST + /power line
@@ -145,6 +147,16 @@ sub ir_command ($self, $cmd, @) {
 
 sub get_power ($self, @) {
     Ok $self->sb->get_power;
+}
+
+sub power_on ($self, @) {
+    $self->sb->power_on;
+    return NoContent;
+}
+
+sub power_off ($self, @) {
+    $self->sb->power_off;
+    return NoContent;
 }
 
 sub reboot ($self, @) {

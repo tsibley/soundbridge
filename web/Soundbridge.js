@@ -127,6 +127,18 @@
         .finally( () => this.sync() );
     }
 
+    powerOn() {
+      this.$log.debug("⚡ Power on!");
+      return this.$http.post("/soundbridge/power/on")
+        .finally( () => this.sync() );
+    }
+
+    powerOff() {
+      this.$log.debug("💤 Power off");
+      return this.$http.post("/soundbridge/power/off")
+        .finally( () => this.sync() );
+    }
+
     playPreset(index) {
       this.$log.debug("Playing preset " + index);
       return this.$http.post("/soundbridge/play/preset/" + window.encodeURIComponent(index))
