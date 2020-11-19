@@ -22,7 +22,7 @@ sub ir_command {
 
 sub reboot    { $_[0]->rcp('Reboot') }
 sub power_off { $_[0]->rcp('SetPowerState standby') }
-sub power_on  { $_[0]->rcp('SetPowerState on') }
+sub power_on  { $_[0]->rcp('SetPowerState on yes') }
 
 sub get_power {
     my $self  = shift;
