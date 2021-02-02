@@ -123,7 +123,7 @@ class SeeMeFeelMe extends TouchMeHealMe {
         remainder: steps ? accumulated % steps : accumulated,
       };
 
-      console.debug("Volume slider state: ", newState);
+      console.debug("[Volume] State: ", newState);
 
       this.adjustSlider(dy);
       this.adjustVolume(steps);

@@ -10,9 +10,9 @@
       this.$http     = $http;
       this.$interval = $interval;
       this.$debounce = debounce;
-      this.$log      = $log;
+      this.$log      = new PrefixedLogger("[Soundbridge]", $log);
 
-      $log.debug("Soundbridge — Let the music play!");
+      this.$log.debug("Let the music play!");
       this.sync();
       this.fetchPresets();
 

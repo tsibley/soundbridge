@@ -9,8 +9,9 @@
 
       this.$http = $http;
       this.$log  = $log;
+      this.$log  = new PrefixedLogger("[StereoReceiver]", $log);
 
-      $log.debug("StereoReceiver initialized");
+      this.$log.debug("Initialized");
 
       return StereoReceiver.$instance = this;
     }
