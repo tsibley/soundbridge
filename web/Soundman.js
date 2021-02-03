@@ -58,8 +58,8 @@
           break;
 
         default:
-          this.$log.error(`Don't know how to start ${to}`);
-          throw Error(`Don't know how to start ${to}`);
+          this.$log.error(`Don't know how to switch to ${to}`);
+          throw Error(`Don't know how to switch to ${to}`);
       }
 
       this._input = to;
@@ -79,7 +79,7 @@
           break;
 
         default:
-          this.$log.debug(`No clue how to stop ${from}, FWIW`);
+          this.$log.debug(`No clue how to switch from ${from}, FWIW`);
       }
     }
   }
