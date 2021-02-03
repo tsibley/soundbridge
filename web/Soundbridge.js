@@ -21,7 +21,7 @@
 
     sync() {
       this.$log.debug("Syncing");
-      this.fetchState().then(
+      return this.fetchState().then(
         state => {
           switch (state.power) {
             case 'off':
@@ -38,6 +38,7 @@
                 this.$log.debug("Started periodic sync");
               }
           }
+          return state;
         }
       );
     }
