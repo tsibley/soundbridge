@@ -22,12 +22,10 @@
     set input(to) {
       const from = this._input;
 
-      if (from !== to) {
-        this.$log.debug(`Switching inputs ${from} → ${to}`);
-      } else {
-        this.$log.debug(`Switching inputs off`);
-        to = null;
-      }
+      if (from === to)
+        to = "off"
+
+      this.$log.debug(`Switching inputs ${from} → ${to}`);
 
       switch (to) {
         case "soundbridge":
@@ -50,7 +48,7 @@
           this._receiver.input("fm");
           break;
 
-        case null:
+        case "off":
           // All off!
           this._receiver.powerOff();
           this._soundbridge.powerOff();
@@ -74,6 +72,7 @@
           break;
 
         case "fm":
+        case "off":
         case null:
           // Nothing to do.
           break;
