@@ -1,0 +1,13 @@
+Copy or symlink the remote config, Sony-RMT-AA400U.lircd.conf, into
+/etc/lirc/lircd.conf.d/ and (optionally?) disable any existing
+devinput.lircd.conf that's there.
+
+Make sure that you're using
+
+  driver = irtoy
+
+in /etc/lirc/lirc_options.conf.
+
+Restart lircd and then try sending an IR message with, e.g.:
+
+    irsend send_once Sony-RMT-AA400U VOLUME_UP
