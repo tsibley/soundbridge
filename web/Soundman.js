@@ -11,8 +11,36 @@
       this.$log         = new PrefixedLogger("[Soundman]", $log);
 
       this._input = null;
+      this._intuitInput();
 
       return this;
+    }
+
+    _intuitInput() {
+      Promise.all([
+        this._soundbridge.sync()
+          .then(state => ["soundbridge", state.power === "on"]),
+
+        this._plink.sync()
+          .then(state => ["plink", state.status === "play"]),
+      ])
+      .then(inputs => {
+        this.$log.debug("Intuiting input from", JSON.stringify(inputs));
+
+        if (this.input) {
+          this.$log.debug("No input intuited: input already set");
+          return;
+        }
+
+        for (const [input, isActive] of inputs) {
+          if (isActive) {
+            this.$log.debug("Intuited input", input);
+            return this.input = input;
+          }
+        }
+
+        this.$log.debug("No input intuited: no active input");
+      });
     }
 
     get input() {
