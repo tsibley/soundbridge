@@ -1,20 +1,27 @@
 <!DOCTYPE html>
-<html ng-app="Soundbridge">
+<html ng-app="HiFi">
   <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui" />
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-    <title>Soundbridge Remote</title>
+    <title>HiFi Remote</title>
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.17/angular-filter.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"></script>
     <script type="text/javascript" src="vendor/angular-debounce.min.js"></script>
     <script type="text/javascript" src="touches.js"></script>
+    <script type="text/javascript" src="logging.js"></script>
     <script type="text/javascript" src="app.js"></script>
     <script type="text/javascript" src="components.js"></script>
     <script type="text/javascript" src="Soundbridge.js"></script>
+    <script type="text/javascript" src="Plink.js"></script>
+    <script type="text/javascript" src="StereoReceiver.js"></script>
+    <script type="text/javascript" src="Soundman.js"></script>
 
 	  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <style type="text/css">
@@ -36,15 +43,75 @@
         -webkit-overflow-scrolling: touch;
       }
 
-      body > section {
+      body > nav {
+        background-color: hsl(0, 0%, 93%);
+        border-bottom: 1px solid #ccc;
+        box-shadow: 0 1px 2px #ddd;
+      }
+
+      nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        display: flex;
+        flex-direction: row;
+      }
+
+      nav ul li {
+        flex: 1;
+        text-align: center;
+      }
+
+      nav ul li a {
+        display: block;
+        padding: 0.5em;
+        text-transform: uppercase;
+      }
+
+      nav a, nav a:visited, nav a:hover {
+        color: rgb(51, 51, 51);
+      }
+
+      nav a:hover {
+        background-color: hsl(0, 0%, 83%);
+      }
+
+      nav ul li a img {
+        filter: grayscale(1);
+      }
+
+      nav ul li.active a img {
+        filter: none;
+      }
+
+      main {
+        flex: auto;
+        display: flex;
+        flex-direction: column;
+      }
+
+      main > div {
+        flex: auto;
+        display: flex;
+        flex-direction: column;
+      }
+
+      main > div > section {
         flex: auto;
         padding: 20px;
       }
 
-      body > footer {
+      main > div > footer {
         padding: 10px 20px;
         background: #eee;
         border-top: 1px solid #ccc;
+        box-shadow: 0 -1px 2px #ddd;
+      }
+
+      main > div > iframe {
+        flex: auto;
+        border: none;
       }
 
       .text-lg {
@@ -103,65 +170,89 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/icons/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
-    <link rel="manifest" href="/icons/manifest.json">
+    <link rel="manifest" href="/manifest.json">
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="/icons/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="white">
   </head>
-  <body>
-    <section style="
-        background:
-          linear-gradient(to top, transparent {{ +soundbridge.volume }}%, white {{ +soundbridge.volume }}%),
-          linear-gradient(to top, #9198e5, #e66465 90%);">
+  <body ng-controller="Soundman as soundman">
+    <nav>
+      <ul>
+        <li ng-class="{active: soundman.input === 'soundbridge'}">
+          <a ng-click="soundman.input = 'soundbridge'">
+            <img src="/icons/roku-soundbridge.png" height="32" alt="Soundbridge">
+          </a>
 
-      <div id="presets">
-        <play-preset
-          ng-repeat="preset in soundbridge.presets"
-          preset="preset">
-        </play-preset>
-      </div>
+        <li ng-class="{active: soundman.input === 'plink'}">
+          <a ng-click="soundman.input = 'plink'">
+            <img src="/icons/plink.svg" height="32" alt="Plink">
+          </a>
 
-      <div class="current-song media" ng-switch="soundbridge.state.currentSong != null">
-        <div class="media-left">
-          <div class="media-object">
-            <span ng-switch-when="true">🎶 </span>
-            <span ng-switch-when="false">🔇 </span>
+        <li ng-class="{active: soundman.input === 'fm'}">
+          <a ng-click="soundman.input = 'fm'">
+            <img src="/icons/broadcast-tower.svg" height="32" alt="FM radio">
+          </a>
+      </ul>
+    </nav>
+    <main class="volume-slider" ng-switch="soundman.input">
+      <div ng-switch-when="soundbridge">
+        <section>
+          <div id="presets">
+            <play-preset
+              ng-repeat="preset in soundbridge.presets"
+              preset="preset">
+            </play-preset>
           </div>
-        </div>
-        <div ng-switch-when="true" class="media-body">
-          <h4 class="media-heading">
-            {{ soundbridge.state.currentSong.title }}
-          </h4>
-          <p>{{ soundbridge.state.currentSong.artist }}</p>
-        </div>
-        <div ng-switch-when="false" class="media-body">
-          <h4 class="media-heading">Not playing</h4>
-        </div>
+
+          <div class="current-song media" ng-switch="soundbridge.state.currentSong != null">
+            <div class="media-left">
+              <div class="media-object">
+                <span ng-switch-when="true">🎶 </span>
+                <span ng-switch-when="false">🔇 </span>
+              </div>
+            </div>
+            <div ng-switch-when="true" class="media-body">
+              <h4 class="media-heading">
+                {{ soundbridge.state.currentSong.title }}
+              </h4>
+              <p>{{ soundbridge.state.currentSong.artist }}</p>
+            </div>
+            <div ng-switch-when="false" class="media-body">
+              <h4 class="media-heading">Not playing</h4>
+            </div>
+          </div>
+        </section>
+        <footer>
+          <div id="controls">
+            <button class="power btn btn-default btn-lg"
+              ng-class="{
+                'btn-danger':  soundbridge.state.power === 'on',
+                'btn-success': soundbridge.state.power === 'off' }"
+              ng-click="soundbridge.togglePower()">
+              <span class="glyphicon glyphicon-off"></span>
+            </button>
+            <div class="volume text-xl" ng-if="soundbridge.volume != null">
+              <span class="glyphicon" ng-class="{
+                  'glyphicon-volume-up':   soundbridge.volume >= 50,
+                  'glyphicon-volume-down': soundbridge.volume && soundbridge.volume < 50,
+                  'glyphicon-volume-off':  soundbridge.volume === 0,
+                }"></span>
+              <span class="level">{{ soundbridge.volume }}</span>
+            </div>
+            <button ng-click="soundbridge.pause()" class="btn btn-lg btn-success">
+              <span class="glyphicon glyphicon-play"></span><span class="glyphicon glyphicon-pause"></span>
+            </button>
+          </div>
+        </footer>
       </div>
-    </section>
-    <footer>
-      <div id="controls">
-        <button class="power btn btn-default btn-lg"
-          ng-class="{
-            'btn-danger':  soundbridge.state.power === 'on',
-            'btn-success': soundbridge.state.power === 'off' }"
-          ng-click="soundbridge.togglePower()">
-          <span class="glyphicon glyphicon-off"></span>
-        </button>
-        <div class="volume text-xl" ng-if="soundbridge.volume != null">
-          <span class="glyphicon" ng-class="{
-              'glyphicon-volume-up':   soundbridge.volume >= 50,
-              'glyphicon-volume-down': soundbridge.volume && soundbridge.volume < 50,
-              'glyphicon-volume-off':  soundbridge.volume === 0,
-            }"></span>
-          <span class="level">{{ soundbridge.volume }}</span>
-        </div>
-        <button ng-click="soundbridge.pause()" class="btn btn-lg btn-success">
-          <span class="glyphicon glyphicon-play"></span><span class="glyphicon glyphicon-pause"></span>
-        </button>
+      <div ng-switch-when="plink">
+        <iframe src="http://plink:3689">
+          <a href="http://plink:3689">plink</a>
+        </iframe>
       </div>
-    </footer>
+      <div ng-switch-default>
+        <mark>XXX TODO</mark>
+      </div>
+    </main>
   </body>
 </html>

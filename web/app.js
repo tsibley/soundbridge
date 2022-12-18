@@ -3,7 +3,7 @@
   'use strict';
 
   angular
-    .module('Soundbridge', ['angular.filter', 'ui.bootstrap', 'rt.debounce'])
+    .module('HiFi', ['angular.filter', 'ui.bootstrap', 'rt.debounce'])
     .config(configure)
     .run(init);
 
@@ -29,15 +29,20 @@
   // access it without adding a useless wrapper component or componentizing
   // everything unnecessarily for a project like this.
 
-  init.$inject = ['Soundbridge', '$rootScope', '$log'];
+  init.$inject = ['Soundbridge', 'StereoReceiver', '$rootScope', '$log'];
 
-  function init(Soundbridge, $rootScope, $log) {
+  function init(Soundbridge, StereoReceiver, $rootScope, $log) {
     $rootScope.soundbridge = Soundbridge;
 
     // Easier to register this global handler here and inject necessary
     // components into it than to add directive boilerplate and a superfluous
     // tag/attribute to the HTML.
-    new SeeMeFeelMe(document.querySelector("section"), $rootScope, Soundbridge);
+    new SeeMeFeelMe(
+      document.querySelector(".volume-slider"),
+      steps => $rootScope.$apply(() => {
+        StereoReceiver.adjustVolume(steps);
+      })
+    );
   }
 
 })();

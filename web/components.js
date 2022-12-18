@@ -3,7 +3,7 @@
   'use strict';
 
   angular
-    .module('Soundbridge')
+    .module('HiFi')
     .component('playPreset', {
       controller: componentController,
       templateUrl: 'partial/play-preset.html',

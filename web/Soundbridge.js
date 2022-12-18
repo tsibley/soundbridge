@@ -10,9 +10,9 @@
       this.$http     = $http;
       this.$interval = $interval;
       this.$debounce = debounce;
-      this.$log      = $log;
+      this.$log      = new PrefixedLogger("[Soundbridge]", $log);
 
-      $log.debug("Soundbridge — Let the music play!");
+      this.$log.debug("Let the music play!");
       this.sync();
       this.fetchPresets();
 
@@ -21,7 +21,7 @@
 
     sync() {
       this.$log.debug("Syncing");
-      this.fetchState().then(
+      return this.fetchState().then(
         state => {
           switch (state.power) {
             case 'off':
@@ -38,6 +38,7 @@
                 this.$log.debug("Started periodic sync");
               }
           }
+          return state;
         }
       );
     }
@@ -71,14 +72,14 @@
     fetchState() {
       this.$log.debug("Fetching state");
 
-      return this.$http.get("/state")
+      return this.$http.get("/soundbridge/state")
         .then( this.updateStateFromResponse() );
     }
 
     fetchPresets() {
       this.$log.debug("Fetching presets");
 
-      return this.$http.get("/presets").then(
+      return this.$http.get("/soundbridge/presets").then(
         response => this.presets = response.data,
         error => { this.$log.error("Failed to fetch presets:", error) }
       );
@@ -117,30 +118,42 @@
     setVolume(vol) {
       this.$log.debug("Setting volume");
 
-      return this.$http.post("/volume/" + window.encodeURIComponent(vol))
+      return this.$http.post("/soundbridge/volume/" + window.encodeURIComponent(vol))
         .then( this.updateStateFromResponse("volume", Number) );
     }
 
     togglePower() {
       this.$log.debug("⚡ Power!");
-      return this.$http.post("/ir/power")
+      return this.$http.post("/soundbridge/power")
+        .finally( () => this.sync() );
+    }
+
+    powerOn() {
+      this.$log.debug("⚡ Power on!");
+      return this.$http.post("/soundbridge/power/on")
+        .finally( () => this.sync() );
+    }
+
+    powerOff() {
+      this.$log.debug("💤 Power off");
+      return this.$http.post("/soundbridge/power/off")
         .finally( () => this.sync() );
     }
 
     playPreset(index) {
       this.$log.debug("Playing preset " + index);
-      return this.$http.post("/play/preset/" + window.encodeURIComponent(index))
+      return this.$http.post("/soundbridge/play/preset/" + window.encodeURIComponent(index))
         .finally( () => this.sync() );
     }
 
     pause() {
       this.$log.debug("Pause");
-      return this.$http.post("/pause");
+      return this.$http.post("/soundbridge/pause");
     }
   }
 
   angular
-    .module('Soundbridge')
+    .module('HiFi')
     .service('Soundbridge', ['$http', '$interval', 'debounce', '$log', Soundbridge]);
 
 })();
