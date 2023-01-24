@@ -188,6 +188,11 @@
             <img src="/icons/plink.svg" height="32" alt="Plink">
           </a>
 
+        <li ng-class="{active: soundman.input === 'phono'}">
+          <a ng-click="soundman.input = 'phono'">
+            <img src="/icons/phono.svg" height="32" alt="Phono">
+          </a>
+
         <li ng-class="{active: soundman.input === 'fm'}">
           <a ng-click="soundman.input = 'fm'">
             <img src="/icons/broadcast-tower.svg" height="32" alt="FM radio">

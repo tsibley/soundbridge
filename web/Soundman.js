@@ -72,6 +72,10 @@
           this._plink.play();
           break;
 
+        case "phono":
+          this._receiver.input("phono");
+          break;
+
         case "fm":
           this._receiver.input("fm");
           break;
@@ -99,6 +103,7 @@
           this._plink.pause();
           break;
 
+        case "phono":
         case "fm":
         case "off":
         case null:
