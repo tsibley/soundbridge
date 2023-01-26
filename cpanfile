@@ -8,7 +8,6 @@ requires 'IPC::Run';
 requires 'IO::Socket::INET';
 requires 'List::MoreUtils';
 requires 'List::Util';
-requires 'Method::Signatures::Simple';
 requires 'Moo';
 requires 'namespace::clean';
 requires 'Net::UPnP::AV::MediaRenderer';

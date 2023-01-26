@@ -1,15 +1,16 @@
 use strict;
 use warnings;
+use 5.022;
 
 package Soundbridge;
 
 use Moo;
 use IO::Socket::INET;
-use Method::Signatures::Simple;
 use Types::Standard qw( Str InstanceOf Num Int );
 use Carp qw(croak);
 use Time::HiRes qw(alarm);
 use namespace::clean;
+use experimental qw< signatures >;
 
 
 our $DEFAULT_SERVER = sprintf "%s:5555", $ENV{'SOUNDBRIDGE'} || "soundbridge.local";
@@ -38,11 +39,11 @@ has log_level => (
     default => sub { 1 },
 );
 
-method DEMOLISH {
+sub DEMOLISH($self, @) {
     $self->disconnect;
 }
 
-method connect {
+sub connect($self) {
     my $sock = IO::Socket::INET->new($self->server)
         or die "Unable to bind to ",$self->server,": $!";
     $self->_set_socket($sock);
@@ -53,18 +54,18 @@ method connect {
         unless $hello =~ /roku: ready/;
 }
 
-method disconnect {
+sub disconnect($self) {
     return unless $self->socket;
     $self->socket->close;
     $self->clear_socket;
     $self->debug("Disconnected from ", $self->server);
 }
 
-method get($cmd, @params) {
+sub get($self, $cmd, @params) {
     $self->rcp(join " ", "Get$cmd", @params);
 }
 
-method set($cmd, @params) {
+sub set($self, $cmd, @params) {
     my @results = $self->rcp(join " ", "Set$cmd", @params);
 
     die "Set$cmd error: $results[0]"
@@ -73,7 +74,7 @@ method set($cmd, @params) {
     return @results;
 }
 
-method send($text) {
+sub send($self, $text) {
     $self->rcp($_) for split /\n/, $text;
 }
 
@@ -146,9 +147,9 @@ sub rcp {
     return wantarray ? @result : \@result;
 }
 
-method debug {
+sub debug($self, @msg) {
     return unless $self->log_level > 1;
-    warn @_, "\n";
+    warn @msg, "\n";
 }
 
 1;
