@@ -2,6 +2,8 @@
 use strict;
 use warnings;
 use feature qw(say);
+use utf8;
+use open qw< :std :encoding(UTF-8) >;
 
 use List::MoreUtils qw(firstidx);
 use Soundbridge::Remote;

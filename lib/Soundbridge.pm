@@ -46,6 +46,7 @@ sub DEMOLISH($self, @) {
 sub connect($self) {
     my $sock = IO::Socket::INET->new($self->server)
         or die "Unable to bind to ",$self->server,": $!";
+    binmode $sock, ":encoding(UTF-8)";
     $self->_set_socket($sock);
     $self->debug("Connected to ", $self->server);
 
