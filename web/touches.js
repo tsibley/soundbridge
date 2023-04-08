@@ -77,6 +77,10 @@ class SeeMeFeelMe extends TouchMeHealMe {
   constructor(element, adjustVolume = (by) => {}) {
     super(element);
     this.adjustVolume = adjustVolume;
+
+    // Save the original (initial) background for use later
+    this.ogbg = this.element.style.background || "none";
+    this.ogbgBlend = this.element.style.backgroundBlendMode || "normal";
   }
 
   get slidingToRefresh() {
@@ -157,6 +161,7 @@ class SeeMeFeelMe extends TouchMeHealMe {
             adjustment    = Math.floor(Math.max(-100, Math.min(100, heightPercent))); // int between [-100, 100]
 
       this.element.style.background = `
+        ${this.ogbg},
         linear-gradient(
           to ${adjustment > 0 ? "top" : "bottom"},
           white       50%,
@@ -166,8 +171,10 @@ class SeeMeFeelMe extends TouchMeHealMe {
         ),
         linear-gradient(to top, #9198e5, #e66465 90%)
       `;
+      this.element.style.backgroundBlendMode = `screen, normal, normal`;
     } else {
-      this.element.style.removeProperty("background");
+      this.element.style.background = this.ogbg;
+      this.element.style.backgroundBlendMode = this.ogbgBlend;
     }
   }
 }
