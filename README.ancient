@@ -1,0 +1,82 @@
+These utilities are pretty tailored to me right now and could use librarization
+and genericizing a bit.
+
+That said, they're quite simple and easy to modify.
+
+Usage examples:
+
+$ play-preset
+1. 88.5 XPN - Philadelphia
+2. Folk Alley - WXPN - Philadelphia
+3. NPR
+4. 89.7 WGBH - Boston
+5. 89.9 KCRW - Santa Monica
+6. 89.9 KCRW Eclectic Music - Santa Monica
+7. 88.5 WFCR - Western Mass
+
+$ play-preset 6
+Playing 89.9 KCRW Eclectic Music - Santa Monica... OK
+
+$ play-preset folk alley
+Playing Folk Alley - WXPN - Philadelphia... OK
+
+
+$ soundbridge-growl &
+# Uses Ubuntu's growl-like notifications to show the current song.
+# Currently has some KCRW-specific tailoring.
+
+
+$ soundbridge-upnp-play
+Playing 'streaming' over the soundbridge
+
+$ soundbridge-upnp-play speakers
+Playing 'speakers' over the soundbridge
+
+# Plays UPnP audio streams served by Rygel's Gst Launch plugin.
+# I have the following pulseaudio and rygel config snippets below.  See
+# `stream` for how I put it all together.
+
+$ cat ~/.config/rygel.conf # trimmed
+[GstLaunch]
+enabled=true
+launch-items=streaming;speakers
+streaming-title=Audio from blip
+streaming-mime=audio/x-wav
+streaming-launch=pulsesrc device=streaming.monitor ! wavenc
+speakers-title=Audio from blip's speakers
+speakers-mime=audio/x-wav
+speakers-launch=pulsesrc device=alsa_output.pci-0000_00_1b.0.analog-stereo.monitor ! wavenc
+
+$ tail -n 3 /etc/pulse/default.pa
+# Setup a streaming sink
+load-module module-null-sink sink_name=streaming format=s16be channels=2 rate=44100 sink_properties="device.description='Streaming'"
+
+
+$ soundbridge-upnp-stop
+# Stop the music and go home
+
+
+`stream` is very specific to my setup and takes care of all the funny business
+of redirecting pulse audio streams around to the various devices I care about.
+Namely, the work airtunes speakers, my soundbridge, and my local laptop
+speakers.  It's a good example of how to move all that audio around and start
+and stop network streaming.  Examples of how I use it:
+
+$ stream home
+Playing 'streaming' over the soundbridge
+Streaming Banshee (18) to home (streaming)
+
+$ stream off
+Streaming Banshee (18) to off (0)
+
+$ stream work
+Streaming Banshee (18) to work (raop.Conference-Room.local)
+
+$ stream work chrome
+Streaming chrome (21) to work (raop.Conference-Room.local)
+
+$ stream off chrome
+Streaming chrome (21) to off (0)
+
+$ stream preset npr
+Playing NPR... OK

@@ -1,82 +1,27 @@
-These utilities are pretty tailored to me right now and could use librarization
-and genericizing a bit.
+This is a hobby project of mine for all things audio control at home.
 
-That said, they're quite simple and easy to modify.
+It all got started in 2011 when I was living in Somerville, MA after college
+and bought myself a Roku SoundBridge M1000 on eBay—finally!—after many years
+of wanting one and a few years after they'd stopped manufacture of them.
 
-Usage examples:
+From there this project has grown in fits and starts as I've grown and changed
+and how I've listened to music has changed.  Parts of this project have gone to
+the weeds, while others are still fairly well tended.  None of it was (nor is)
+ever meant for anyone but me, but over the years a couple people have reached
+out to say they found useful bits and bobs.
 
-$ play-preset
-1. 88.5 XPN - Philadelphia
-2. Folk Alley - WXPN - Philadelphia
-3. NPR
-4. 89.7 WGBH - Boston
-5. 89.9 KCRW - Santa Monica
-6. 89.9 KCRW Eclectic Music - Santa Monica
-7. 88.5 WFCR - Western Mass
+Most of what I use in here these days is the local web app that integrates my
+different sources of music with my stereo receiver and living room speakers.
+I run the web service on plink, a HiFi Berry with an IR transceiver that sits
+next to my SoundBridge and stereo receiver.  The web app's frontend (web/) is
+plain old JavaScript with Angular 1.x.  It's backend (app.psgi, lib/) is Perl.
 
-$ play-preset 6
-Playing 89.9 KCRW Eclectic Music - Santa Monica... OK
+I very rarely use the utility programs in the top-level directory anymore, but
+there's some old and out-of-date notes on them in README.ancient.
 
-$ play-preset folk alley
-Playing Folk Alley - WXPN - Philadelphia... OK
+And despite the years of using these software controls for my music listening,
+I still more often than not use the buttons, knobs, remotes, and displays of
+the actual audio gear in my living room because it's just easier and calmer
+than opening up a web app on my phone.
 
-
-$ soundbridge-growl &
-# Uses Ubuntu's growl-like notifications to show the current song.
-# Currently has some KCRW-specific tailoring.
-
-
-$ soundbridge-upnp-play
-Playing 'streaming' over the soundbridge
-
-$ soundbridge-upnp-play speakers
-Playing 'speakers' over the soundbridge
-
-# Plays UPnP audio streams served by Rygel's Gst Launch plugin.
-# I have the following pulseaudio and rygel config snippets below.  See
-# `stream` for how I put it all together.
-
-$ cat ~/.config/rygel.conf # trimmed
-[GstLaunch]
-enabled=true
-launch-items=streaming;speakers
-streaming-title=Audio from blip
-streaming-mime=audio/x-wav
-streaming-launch=pulsesrc device=streaming.monitor ! wavenc
-speakers-title=Audio from blip's speakers
-speakers-mime=audio/x-wav
-speakers-launch=pulsesrc device=alsa_output.pci-0000_00_1b.0.analog-stereo.monitor ! wavenc
-
-$ tail -n 3 /etc/pulse/default.pa
-# Setup a streaming sink
-load-module module-null-sink sink_name=streaming format=s16be channels=2 rate=44100 sink_properties="device.description='Streaming'"
-
-
-$ soundbridge-upnp-stop
-# Stop the music and go home
-
-
-`stream` is very specific to my setup and takes care of all the funny business
-of redirecting pulse audio streams around to the various devices I care about.
-Namely, the work airtunes speakers, my soundbridge, and my local laptop
-speakers.  It's a good example of how to move all that audio around and start
-and stop network streaming.  Examples of how I use it:
-
-$ stream home
-Playing 'streaming' over the soundbridge
-Streaming Banshee (18) to home (streaming)
-
-$ stream off
-Streaming Banshee (18) to off (0)
-
-$ stream work
-Streaming Banshee (18) to work (raop.Conference-Room.local)
-
-$ stream work chrome
-Streaming chrome (21) to work (raop.Conference-Room.local)
-
-$ stream off chrome
-Streaming chrome (21) to off (0)
-
-$ stream preset npr
-Playing NPR... OK
+  -trs, 8 April 2023
