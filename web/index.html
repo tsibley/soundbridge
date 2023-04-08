@@ -197,6 +197,11 @@
           <a ng-click="soundman.input = 'fm'">
             <img src="/icons/broadcast-tower.svg" height="32" alt="FM radio">
           </a>
+
+        <li ng-class="{active: soundman.input === 'receiver'}">
+          <a ng-click="soundman.input = 'receiver'">
+            <img src="/icons/sony-dh190.png" height="32" alt="Receiver">
+          </a>
       </ul>
     </nav>
     <main class="volume-slider" ng-switch="soundman.input">

@@ -80,6 +80,10 @@
           this._receiver.input("fm");
           break;
 
+        case "receiver":
+          this._receiver.powerOn();
+          break;
+
         case "off":
           // All off!
           this._receiver.powerOff();
@@ -94,6 +98,11 @@
 
       this._input = to;
 
+      // Don't turn off what we switched from when switching to direct
+      // receiver control; we're likely switching right back in a minute.
+      if (to === "receiver")
+        return;
+
       switch (from) {
         case "soundbridge":
           this._soundbridge.powerOff();
@@ -105,6 +114,7 @@
 
         case "phono":
         case "fm":
+        case "receiver":
         case "off":
         case null:
           // Nothing to do.
