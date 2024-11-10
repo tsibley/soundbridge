@@ -17,14 +17,18 @@
     }
 
     _intuitInput() {
-      Promise.all([
+      Promise.allSettled([
         this._soundbridge.sync()
           .then(state => ["soundbridge", state.power === "on"]),
 
         this._plink.sync()
           .then(state => ["plink", state.status === "play"]),
       ])
-      .then(inputs => {
+      .then(results => {
+        this.$log.debug("Intuiting sync results", JSON.stringify(results));
+
+        const inputs = results.flatMap(({value: v}) => v ? [v] : []);
+
         this.$log.debug("Intuiting input from", JSON.stringify(inputs));
 
         if (this.input) {
