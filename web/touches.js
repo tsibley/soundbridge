@@ -162,6 +162,7 @@ class SeeMeFeelMe extends TouchMeHealMe {
 
       this.element.style.background = `
         ${this.ogbg},
+        ${this.ogbg},
         linear-gradient(
           to ${adjustment > 0 ? "top" : "bottom"},
           white       50%,
@@ -171,7 +172,7 @@ class SeeMeFeelMe extends TouchMeHealMe {
         ),
         linear-gradient(to top, #9198e5, #e66465 90%)
       `;
-      this.element.style.backgroundBlendMode = `screen, normal, normal`;
+      this.element.style.backgroundBlendMode = `normal, screen, normal, normal`;
     } else {
       this.element.style.background = this.ogbg;
       this.element.style.backgroundBlendMode = this.ogbgBlend;
