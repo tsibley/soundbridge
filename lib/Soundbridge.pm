@@ -13,7 +13,7 @@ use namespace::clean;
 use experimental qw< signatures >;
 
 
-our $DEFAULT_SERVER = sprintf "%s:5555", $ENV{'SOUNDBRIDGE'} || "soundbridge.local";
+our $DEFAULT_SERVER = sprintf "%s:5555", $ENV{'SOUNDBRIDGE'} || "soundbridge.home";
 
 has server => (
     is      => 'rw',
