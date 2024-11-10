@@ -26,6 +26,7 @@
                 this.sync._interval = this.$interval(() => this.sync(), 5000);
                 this.$log.debug("Started periodic sync");
               }
+              break;
 
             default:
               if (this.sync._interval) {
@@ -33,7 +34,6 @@
                 this.sync._interval = null;
                 this.$log.debug("Stopped periodic sync");
               }
-              break;
           }
           return state;
         }
